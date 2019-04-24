@@ -1,0 +1,40 @@
+name: $(GitVersion.FullSemVer)
+pool:
+  vmImage: 'windows-2019'
+
+variables:
+  buildConfiguration: Release
+
+trigger:
+  batch: true
+  branches:
+    include:
+      - master
+
+steps:
+- checkout: self
+  clean: true
+  persistCredentials: true
+
+- script: GitVersion /output buildserver
+  displayName: GitVersion
+
+- script: dotnet pack -c $(buildConfiguration) -o $(Build.ArtifactStagingDirectory)\out -p:Version=$(GitVersion.SemVer) --include-symbols
+  displayName: 'dotnet pack'
+
+- script: dotnet test -c $(buildConfiguration) --logger trx --collect "Code coverage"
+  displayName: 'dotnet test'
+  condition: and(succeeded(), eq(variables['Build.Reason'], 'PullRequest'))
+
+- task: PublishTestResults@2
+  displayName: 'Publish test results'
+  condition: and(succeededOrFailed(), eq(variables['Build.Reason'], 'PullRequest'))
+  inputs:
+    testRunner: VSTest
+    testResultsFiles: '**/*.trx'
+
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Artifact'
+  inputs:
+    PathtoPublish: $(Build.ArtifactStagingDirectory)\out
+    ArtifactName: out
