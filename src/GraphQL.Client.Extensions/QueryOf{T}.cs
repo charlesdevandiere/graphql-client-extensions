@@ -7,9 +7,37 @@ using Newtonsoft.Json;
 
 namespace GraphQL.Client.Extensions
 {
-    public class Query<TSource> : Query where TSource : class
+    public class Query<TSource> : Query, IQuery<TSource> where TSource : class
     {
-        public IQuery Select<TProperty>(Expression<Func<TSource, TProperty>> lambda)
+        public new IQuery<TSource> Raw(string rawQuery)
+        {
+            base.Raw(rawQuery);
+
+            return this;
+        }
+
+        public new IQuery<TSource> Name(string queryName)
+        {
+            base.Name(queryName);
+
+            return this;
+        }
+        
+        public new IQuery<TSource> Alias(string alias)
+        {
+            base.Alias(alias);
+
+            return this;
+        }
+
+        public new IQuery<TSource> Comment(string comment)
+        {
+            base.Comment(comment);
+
+            return this;
+        }
+
+        public IQuery<TSource> Select<TProperty>(Expression<Func<TSource, TProperty>> lambda)
         {
             if (lambda == null)
             {
@@ -22,10 +50,33 @@ namespace GraphQL.Client.Extensions
                 name = property.Name;
             }
 
-            return this.Select(name);
+            base.Select(name);
+
+            return this;
         }
 
-        public IQuery SubSelect<TSubSource>(Expression<Func<TSource, TSubSource>> lambda, Query<TSubSource> subQuery) where TSubSource : class
+        public new IQuery<TSource> Where(string key, object where)
+        {
+            base.Where(key, where);
+
+            return this;
+        }
+
+        public new IQuery<TSource> Where(Dictionary<string, object> dict)
+        {
+            base.Where(dict);
+
+            return this;
+        }
+
+        public new IQuery<TSource> Batch(IQuery query)
+        {
+            base.Batch(query);
+
+            return this;
+        }
+
+        public IQuery<TSource> SubSelect<TSubSource>(Expression<Func<TSource, TSubSource>> lambda, IQuery<TSubSource> subQuery) where TSubSource : class
         {
             if (lambda == null)
             {
@@ -43,7 +94,9 @@ namespace GraphQL.Client.Extensions
             }
             subQuery.Name(name);
 
-            return this.Select(subQuery);
+            base.Select(subQuery);
+
+            return this;
         }
 
         private static PropertyInfo GetPropertyInfo<TProperty>(Expression<Func<TSource, TProperty>> lambda)

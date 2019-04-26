@@ -29,7 +29,7 @@ namespace GraphQL.Client.Extensions.UnitTests
         public void TestSelectWithCustomName()
         {
             var query = new Query<Truck>();
-            query.Select(c => c.Name);
+            query.Select(t => t.Name);
 
             CollectionAssert.AreEqual(new List<string> { "name" }, query.SelectList);
         }
@@ -38,9 +38,38 @@ namespace GraphQL.Client.Extensions.UnitTests
         public void TestSubSelectWithCustomName()
         {
             var query = new Query<Truck>();
-            query.SubSelect(c => c.Load, new Query<Load>());
+            query.SubSelect(t => t.Load, new Query<Load>());
 
             Assert.AreEqual("load", (query.SelectList[0] as IQuery).QueryName);
+        }
+
+        [TestMethod]
+        public void TestQuery()
+        {
+            var query = new Query<Car>();
+            query.Name(nameof(Car))
+                .Select(car => car.Name)
+                .Select(car => car.Price)
+                .SubSelect(
+                    car => car.Color,
+                    new Query<Color>()
+                        .Select(color => color.Red)
+                        .Select(color => color.Green)
+                        .Select(color => color.Blue));
+
+            Assert.AreEqual(nameof(Car), query.QueryName);
+            Assert.AreEqual(3, query.SelectList.Count);
+            Assert.AreEqual(nameof(Car.Name), query.SelectList[0]);
+            Assert.AreEqual(nameof(Car.Price), query.SelectList[1]);
+
+            Assert.AreEqual(nameof(Car.Color), (query.SelectList[2] as IQuery).QueryName);
+            var expectedSubSelectList = new List<string>
+            {
+                nameof(Color.Red),
+                nameof(Color.Green),
+                nameof(Color.Blue)
+            };
+            CollectionAssert.AreEqual(expectedSubSelectList, (query.SelectList[2] as IQuery).SelectList);
         }
     }
 }
