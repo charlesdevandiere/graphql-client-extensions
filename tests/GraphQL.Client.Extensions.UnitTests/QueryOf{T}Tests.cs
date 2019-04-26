@@ -71,5 +71,30 @@ namespace GraphQL.Client.Extensions.UnitTests
             };
             CollectionAssert.AreEqual(expectedSubSelectList, (query.SelectList[2] as IQuery).SelectList);
         }
+
+        [TestMethod]
+        public void TestQueryWithCustomName()
+        {
+            var query = new Query<Truck>();
+            query.Name("truck")
+                .Select(truck => truck.Name)
+                .Select(truck => truck.WeelsNumber)
+                .SubSelect(
+                    truck => truck.Load,
+                    new Query<Load>()
+                        .Select(load => load.Weight));
+
+            Assert.AreEqual("truck", query.QueryName);
+            Assert.AreEqual(3, query.SelectList.Count);
+            Assert.AreEqual("name", query.SelectList[0]);
+            Assert.AreEqual("weelsNumber", query.SelectList[1]);
+
+            Assert.AreEqual("load", (query.SelectList[2] as IQuery).QueryName);
+            var expectedSubSelectList = new List<string>
+            {
+                "weight"
+            };
+            CollectionAssert.AreEqual(expectedSubSelectList, (query.SelectList[2] as IQuery).SelectList);
+        }
     }
 }
