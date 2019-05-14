@@ -35,6 +35,7 @@ steps:
 
 - task: PublishBuildArtifacts@1
   displayName: 'Publish Artifact'
+  condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
   inputs:
     PathtoPublish: $(Build.ArtifactStagingDirectory)\out
     ArtifactName: out
