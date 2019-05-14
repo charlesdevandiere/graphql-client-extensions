@@ -44,6 +44,30 @@ namespace GraphQL.Client.Extensions.UnitTests
         }
 
         [TestMethod]
+        public void TestSelectWithCustomFormater()
+        {
+            var query = new Query<Car>(options: new QueryOptions
+            {
+                Formater = QueryFormaters.CamelCaseFormater
+            });
+            query.Select(c => c.Name);
+
+            CollectionAssert.AreEqual(new List<string> { "name" }, query.SelectList);
+        }
+
+        [TestMethod]
+        public void TestSubSelectWithCustomFormater()
+        {
+            var query = new Query<Car>(options: new QueryOptions
+            {
+                Formater = QueryFormaters.CamelCaseFormater
+            });
+            query.SubSelect(c => c.Color, new Query<Color>());
+
+            Assert.AreEqual("color", (query.SelectList[0] as IQuery).QueryName);
+        }
+
+        [TestMethod]
         public void TestQuery()
         {
             var query = new Query<Car>();
