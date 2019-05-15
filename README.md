@@ -4,6 +4,8 @@ Extensions for [GraphQL.Client](https://github.com/graphql-dotnet/graphql-client
 
 [![Build Status](https://charlesdevandiere.visualstudio.com/charlesdevandiere/_apis/build/status/charlesdevandiere.graphql-client-extensions?branchName=master)](https://charlesdevandiere.visualstudio.com/charlesdevandiere/_build/latest?definitionId=1&branchName=master)
 
+See complete documentation [here](https://graphql-client-extensions.github.io)
+
 ## Install
 
 ```batch
@@ -18,14 +20,14 @@ var query = new Query<Human>()
     .Name("humans")
     .Select(h => h.FirstName)
     .Select(h => h.LastName)
-    .SubSelect(h => h.Planet, new Query<Planet>()
+    .SubSelect(h => h.HomePlanet, new Query<Planet>()
         .Select(p => p.Name))
     .Where("id", "uE78f5hq");
 // this corresponds to :
 // humans (id: "uE78f5hq") {
 //   firstName
 //   lastName
-//   planet {
+//   homePlanet {
 //     name
 //   }
 // }
