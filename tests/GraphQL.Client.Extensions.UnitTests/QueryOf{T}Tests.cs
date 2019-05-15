@@ -70,8 +70,8 @@ namespace GraphQL.Client.Extensions.UnitTests
         [TestMethod]
         public void TestQuery()
         {
-            var query = new Query<Car>();
-            query.Name(nameof(Car))
+            var query = new Query<Car>()
+                .Name(nameof(Car))
                 .Select(car => car.Name)
                 .Select(car => car.Price)
                 .SubSelect(
@@ -99,8 +99,8 @@ namespace GraphQL.Client.Extensions.UnitTests
         [TestMethod]
         public void TestQueryWithCustomName()
         {
-            var query = new Query<Truck>();
-            query.Name("truck")
+            var query = new Query<Truck>()
+                .Name("truck")
                 .Select(truck => truck.Name)
                 .Select(truck => truck.WeelsNumber)
                 .SubSelect(
