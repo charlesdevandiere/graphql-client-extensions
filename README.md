@@ -4,7 +4,7 @@ Extensions for [GraphQL.Client](https://github.com/graphql-dotnet/graphql-client
 
 [![Build Status](https://charlesdevandiere.visualstudio.com/charlesdevandiere/_apis/build/status/charlesdevandiere.graphql-client-extensions?branchName=master)](https://charlesdevandiere.visualstudio.com/charlesdevandiere/_build/latest?definitionId=1&branchName=master)
 
-See complete documentation [here](https://graphql-client-extensions.github.io)
+See complete documentation [here](https://charlesdevandiere.github.io/graphql-client-extensions/)
 
 ## Install
 
