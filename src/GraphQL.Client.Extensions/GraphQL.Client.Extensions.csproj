@@ -3,15 +3,13 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <Version>0.0.0</Version>
     <Authors>Charles de Vandière</Authors>
-    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <Description>Extensions for GraphQL.Client to build graphQL queries from a C# model, inspired by Getit</Description>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RepositoryUrl>https://github.com/charlesdevandiere/graphql-client-extensions</RepositoryUrl>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="GraphQL.Client" Version="1.0.3" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <None Include="..\..\LICENSE" Pack="true" PackagePath="" />
   </ItemGroup>
 </Project>
