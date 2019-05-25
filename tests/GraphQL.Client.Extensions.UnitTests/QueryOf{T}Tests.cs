@@ -20,7 +20,7 @@ namespace GraphQL.Client.Extensions.UnitTests
         public void TestSubSelect()
         {
             var query = new Query<Car>();
-            query.SubSelect(c => c.Color, new Query<Color>());
+            query.SubSelect(c => c.Color, sq => sq);
 
             Assert.AreEqual(nameof(Car.Color), (query.SelectList[0] as IQuery).QueryName);
         }
@@ -38,7 +38,7 @@ namespace GraphQL.Client.Extensions.UnitTests
         public void TestSubSelectWithCustomName()
         {
             var query = new Query<Truck>();
-            query.SubSelect(t => t.Load, new Query<Load>());
+            query.SubSelect(t => t.Load, sq => sq);
 
             Assert.AreEqual("load", (query.SelectList[0] as IQuery).QueryName);
         }
@@ -62,7 +62,7 @@ namespace GraphQL.Client.Extensions.UnitTests
             {
                 Formater = QueryFormaters.CamelCaseFormater
             });
-            query.SubSelect(c => c.Color, new Query<Color>());
+            query.SubSelect(c => c.Color, sq => sq);
 
             Assert.AreEqual("color", (query.SelectList[0] as IQuery).QueryName);
         }
@@ -70,13 +70,12 @@ namespace GraphQL.Client.Extensions.UnitTests
         [TestMethod]
         public void TestQuery()
         {
-            var query = new Query<Car>()
-                .Name(nameof(Car))
+            var query = new Query<Car>(nameof(Car))
                 .Select(car => car.Name)
                 .Select(car => car.Price)
                 .SubSelect(
                     car => car.Color,
-                    new Query<Color>()
+                    sq => sq
                         .Select(color => color.Red)
                         .Select(color => color.Green)
                         .Select(color => color.Blue));
@@ -99,13 +98,12 @@ namespace GraphQL.Client.Extensions.UnitTests
         [TestMethod]
         public void TestQueryWithCustomName()
         {
-            var query = new Query<Truck>()
-                .Name("truck")
+            var query = new Query<Truck>("truck")
                 .Select(truck => truck.Name)
                 .Select(truck => truck.WeelsNumber)
                 .SubSelect(
                     truck => truck.Load,
-                    new Query<Load>()
+                    sq => sq
                         .Select(load => load.Weight));
 
             Assert.AreEqual("truck", query.QueryName);

@@ -20,7 +20,7 @@ var query = new Query<Human>()
     .Name("humans")
     .Select(h => h.FirstName)
     .Select(h => h.LastName)
-    .SubSelect(h => h.HomePlanet, new Query<Planet>()
+    .SubSelect(h => h.HomePlanet, subQuery => subQuery
         .Select(p => p.Name))
     .Where("id", "uE78f5hq");
 // this corresponds to :
