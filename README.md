@@ -41,3 +41,7 @@ using (var client = new GraphQLClient())
     var human = client.Get<Human>(query);
 }
 ```
+
+## Credits
+
+Rocket by Gregor Cresnar from the Noun Project
