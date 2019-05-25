@@ -1,5 +1,7 @@
 # GraphQL Client Extensions
 
+![logo](https://raw.githubusercontent.com/charlesdevandiere/graphql-client-extensions/master/logo.png)
+
 Extensions for [GraphQL.Client](https://github.com/graphql-dotnet/graphql-client) to build graphQL queries from a C# model, inspired by [Getit](https://github.com/Revmaker/Getit)
 
 ## Install
