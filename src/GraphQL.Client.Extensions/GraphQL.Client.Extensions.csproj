@@ -6,6 +6,7 @@
     <Description>Extensions for GraphQL.Client to build graphQL queries from a C# model, inspired by Getit</Description>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RepositoryUrl>https://github.com/charlesdevandiere/graphql-client-extensions</RepositoryUrl>
+    <PackageIconUrl>https://raw.githubusercontent.com/charlesdevandiere/graphql-client-extensions/master/logo.png</PackageIconUrl>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 
