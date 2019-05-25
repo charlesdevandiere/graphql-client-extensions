@@ -14,7 +14,7 @@ dotnet add package GraphQL.Client.Extensions
 
 ### Create a query
 
-There is tow main ways to create queries. Using strings or using expressions.
+There is two main ways to create queries. Using strings or using expressions.
 
 #### Using strings
 
@@ -62,13 +62,12 @@ class Planet
 Creation of the query
 
 ```csharp
-var query = new Query<Human>()
-    .Name("humans") // set the name of the query
+var query = new Query<Human>("humans") // set the name of the query
     .Select(h => h.FirstName) // add firstName field
     .Select(h => h.LastName) // add lastName field
     .SubSelect( // add a sub query
         h => h.HomePlanet, // set the name of the sub query with the property name
-        new Query<Planet>()
+        subQuery => subQuery
             .Select(p => p.Name)
     )
     .Where("id", "uE78f5hq"); // add filter arguments
@@ -114,7 +113,7 @@ Formater's type is ```Func<string, string>```
 
 ### Run the query
 
-You can run the query using tow GraphQLCLient extension methods:
+You can run the query using two GraphQLCLient extension methods:
 
 * ```Get<T>(IQuery query)```
 * ```Post<T>(IQuery query)```

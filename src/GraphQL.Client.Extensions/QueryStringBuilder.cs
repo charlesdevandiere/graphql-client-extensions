@@ -13,13 +13,19 @@ namespace GraphQL.Client.Extensions
     /// For selections fields it supports sub-selects with params as above.
     ///
     /// Most all structures can be recursive, and are unwound as needed
-    ///
     /// </summary>
     public class QueryStringBuilder : IQueryStringBuilder
     {
+        /// <summary>
+        /// The query string builder.
+        /// </summary>
         public StringBuilder QueryString { get; }
+
         private const int IndentSize = 4;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="QueryStringBuilder" /> class.
+        /// </summary>
         public QueryStringBuilder()
         {
             QueryString = new StringBuilder();

@@ -7,14 +7,43 @@ using Newtonsoft.Json;
 
 namespace GraphQL.Client.Extensions
 {
+    /// <summary>
+    /// The Query Class is a simple class to build out graphQL
+    /// style queries. It will build the parameters and field lists
+    /// similar in a way you would use a SQL query builder to assemble
+    /// a query. This will maintain the response for the query
+    /// </summary>
     public class Query<TSource> : Query, IQuery<TSource> where TSource : class
     {
         private readonly QueryOptions options;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Query{TSource}" /> class.
+        /// </summary>
         public Query() { }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Query{TSource}" /> class.
+        /// </summary>
+        public Query(string name)
+        {
+            this.Name(name);
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Query{TSource}" /> class.
+        /// </summary>
         public Query(QueryOptions options)
         {
+            this.options = options;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Query{TSource}" /> class.
+        /// </summary>
+        public Query(string name, QueryOptions options)
+        {
+            this.Name(name);
             this.options = options;
         }
 
@@ -42,7 +71,7 @@ namespace GraphQL.Client.Extensions
         /// Sets the query Name
         /// </summary>
         /// <param name="queryName">The Query Name String</param>
-        /// <returns>Query</returns>
+        /// <returns>IQuery{TSource}</returns>
         public new IQuery<TSource> Name(string queryName)
         {
             base.Name(queryName);
@@ -58,7 +87,7 @@ namespace GraphQL.Client.Extensions
         /// rename the query with the alias name in the response.
         /// </summary>
         /// <param name="alias">The alias name</param>
-        /// <returns>Query</returns>
+        /// <returns>IQuery{TSource}</returns>
         public new IQuery<TSource> Alias(string alias)
         {
             base.Alias(alias);
@@ -74,7 +103,7 @@ namespace GraphQL.Client.Extensions
         /// multi-line comment
         /// </summary>
         /// <param name="comment">The comment string</param>
-        /// <returns>Query</returns>
+        /// <returns>IQuery{TSource}</returns>
         public new IQuery<TSource> Comment(string comment)
         {
             base.Comment(comment);
@@ -86,8 +115,9 @@ namespace GraphQL.Client.Extensions
         /// Add this property to the select part of the query. This
         /// accepts any property of source object
         /// </summary>
+        /// <typeparam name="TProperty">Select property type</typeparam>
         /// <param name="lambda">Property selector to build select fields</param>
-        /// <returns>Query</returns>
+        /// <returns>IQuery{TSource}</returns>
         public IQuery<TSource> Select<TProperty>(Expression<Func<TSource, TProperty>> lambda)
         {
             if (lambda == null)
@@ -124,7 +154,7 @@ namespace GraphQL.Client.Extensions
         /// Add a dict of key value pairs &lt;string, object&gt; to the existing where part
         /// </summary>
         /// <param name="dict">An existing Dictionary that takes &lt;string, object&gt;</param>
-        /// <returns>Query</returns>
+        /// <returns>IQuery{TSource}</returns>
         /// <exception cref="ArgumentException">Dupe Key</exception>
         /// <exception cref="ArgumentNullException">Null Argument</exception>
         public new IQuery<TSource> Where(Dictionary<string, object> dict)
@@ -156,22 +186,26 @@ namespace GraphQL.Client.Extensions
         /// <summary>
         /// Generates a subselect query from child oject property
         /// </summary>
-        /// <typeparam name="lambda">Child object property selector</typeparam>
-        /// <typeparam name="subQuery">Sub query</typeparam>
-        public IQuery<TSource> SubSelect<TSubSource>(Expression<Func<TSource, TSubSource>> lambda, IQuery<TSubSource> subQuery) where TSubSource : class
+        /// <typeparam name="TSubSource">Sub query source type</typeparam>
+        /// <param name="lambda">Child object property selector</param>
+        /// <param name="buildSubQuery">Build sub query</param>
+        public IQuery<TSource> SubSelect<TSubSource>(Expression<Func<TSource, TSubSource>> lambda, Func<IQuery<TSubSource>, IQuery<TSubSource>> buildSubQuery) where TSubSource : class
         {
             if (lambda == null)
             {
                 throw new ArgumentNullException(nameof(lambda));
             }
-            if (subQuery == null)
+            if (buildSubQuery == null)
             {
-                throw new ArgumentNullException(nameof(subQuery));
+                throw new ArgumentNullException(nameof(buildSubQuery));
             }
 
             PropertyInfo property = GetPropertyInfo(lambda);
             string name = GetPropertyName(property);
-            subQuery.Name(name);
+
+            var query = new Query<TSubSource>(this.options);
+            query.Name(name);
+            IQuery<TSubSource> subQuery = buildSubQuery.Invoke(query);
 
             base.Select(subQuery);
 

@@ -62,10 +62,14 @@ namespace GraphQL.Client.Extensions
         /// <summary>
         /// Adds a sub query to the list
         /// </summary>
-        /// <param name="subSelect">A sub-selection, which can be just a query</param>
+        /// <param name="lambda">The name of the sub query</param>
+        /// <param name="buildeSubSelect">The sub query builder</param>
         /// <returns>Query</returns>
         /// <exception cref="ArgumentException"></exception>
-        IQuery<TSource> SubSelect<TSubSource>(Expression<Func<TSource, TSubSource>> lambda, IQuery<TSubSource> subQuery) where TSubSource : class;
+        IQuery<TSource> SubSelect<TSubSource>(
+            Expression<Func<TSource, TSubSource>> lambda,
+            Func<IQuery<TSubSource>, IQuery<TSubSource>> buildeSubSelect)
+            where TSubSource : class;
 
         /// <summary>
         /// Sets up the Parameters part of the GraphQL query. This
