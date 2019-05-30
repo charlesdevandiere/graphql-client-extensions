@@ -208,7 +208,7 @@ namespace GraphQL.Client.Extensions.UnitTests
             query
                 .Name("test1")
                 .Select("name")
-                .Where(nestedListMap);
+                .SetArguments(nestedListMap);
 
             IQueryStringBuilder queryString = new QueryStringBuilder();
 
@@ -248,7 +248,7 @@ namespace GraphQL.Client.Extensions.UnitTests
             query
                 .Name("test1")
                 .Select("name")
-                .Where(nestedListMap);
+                .SetArguments(nestedListMap);
 
             IQueryStringBuilder queryString = query.Builder;
 
@@ -285,7 +285,7 @@ namespace GraphQL.Client.Extensions.UnitTests
             subSelect
                 .Select(subSelList)
                 .Name("subSelect")
-                .Where(mySubDict);
+                .SetArguments(mySubDict);
 
             // create a sub-select too
             List<object> selList = new List<object>(new object[] { "id", subSelect, "name", "make", "model" });
@@ -341,7 +341,7 @@ namespace GraphQL.Client.Extensions.UnitTests
             subSelect
                 .Select(subSelList)
                 .Name("subSelect")
-                .Where(mySubDict);
+                .SetArguments(mySubDict);
 
             List<object> selList = new List<object>(new object[] { "id", subSelect, "name", "make", "model" });
 

@@ -10,6 +10,9 @@ using Newtonsoft.Json.Linq;
 
 namespace GraphQL.Client.Extensions
 {
+    /// <summary>
+    /// Extensions for the <see cref="GraphQLClient" /> class.
+    /// </summary>
     public static class GraphQLClientExtensions
     {
         /// <summary>

@@ -4,6 +4,9 @@ using System.Linq.Expressions;
 
 namespace GraphQL.Client.Extensions
 {
+    /// <summary>
+    /// Query of TSource interface
+    /// </summary>
     public interface IQuery<TSource> : IQuery where TSource : class
     {
         /// <summary>
@@ -17,7 +20,6 @@ namespace GraphQL.Client.Extensions
         ///
         /// </summary>
         /// <param name="rawQuery">The full valid query to be sent to the endpoint</param>
-        // ReSharper disable once UnusedMethodReturnValue.Global
         new IQuery<TSource> Raw(string rawQuery);
 
         /// <summary>
@@ -51,24 +53,24 @@ namespace GraphQL.Client.Extensions
         new IQuery<TSource> Comment(string comment);
 
         /// <summary>
-        /// Add this list to the select part of the query. This
-        /// accepts any type of list, but must be one of the types
-        /// of data we support, primitives, lists, maps
+        /// Add this property to the select part of the query. This
+        /// accepts any property of source object
         /// </summary>
-        /// <param name="objectList">Generic List of select fields</param>
-        /// <returns>Query</returns>
+        /// <typeparam name="TProperty">Select property type</typeparam>
+        /// <param name="lambda">Property selector to build select fields</param>
+        /// <returns>IQuery{TSource}</returns>
         IQuery<TSource> Select<TProperty>(Expression<Func<TSource, TProperty>> lambda);
 
         /// <summary>
         /// Adds a sub query to the list
         /// </summary>
         /// <param name="lambda">The name of the sub query</param>
-        /// <param name="buildeSubSelect">The sub query builder</param>
+        /// <param name="buildSubSelect">The sub query builder</param>
         /// <returns>Query</returns>
         /// <exception cref="ArgumentException"></exception>
         IQuery<TSource> SubSelect<TSubSource>(
             Expression<Func<TSource, TSubSource>> lambda,
-            Func<IQuery<TSubSource>, IQuery<TSubSource>> buildeSubSelect)
+            Func<IQuery<TSubSource>, IQuery<TSubSource>> buildSubSelect)
             where TSubSource : class;
 
         /// <summary>
@@ -81,7 +83,7 @@ namespace GraphQL.Client.Extensions
         /// <param name="key">The Parameter Name</param>
         /// <param name="where">The value of the parameter, primitive or object</param>
         /// <returns></returns>
-        new IQuery<TSource> Where(string key, object where);
+        new IQuery<TSource> SetArgument(string key, object where);
 
         /// <summary>
         /// Add a dict of key value pairs &lt;string, object&gt; to the existing where part
@@ -89,7 +91,14 @@ namespace GraphQL.Client.Extensions
         /// <param name="dict">An existing Dictionary that takes &lt;string, object&gt;</param>
         /// <returns>Query</returns>
         /// <throws>DuplicateKeyException and others</throws>
-        new IQuery<TSource> Where(Dictionary<string, object> dict);
+        new IQuery<TSource> SetArguments(Dictionary<string, object> dict);
+
+        /// <sumary>
+        /// Sets arguments from object.
+        /// </sumary>
+        /// <typeparam name="TArguments">Arguments type</typeparam>
+        /// <param name="arguments">Arguments object</param>
+        IQuery<TSource> SetArguments<TArguments>(TArguments arguments) where TArguments : class;
 
         /// <summary>
         /// Add additional queries to the request. These

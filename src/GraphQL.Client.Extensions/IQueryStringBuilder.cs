@@ -2,6 +2,9 @@
 
 namespace GraphQL.Client.Extensions
 {
+    /// <summary>
+    /// Query string builder interface
+    /// </summary>
     public interface IQueryStringBuilder
     {
         /// <summary>

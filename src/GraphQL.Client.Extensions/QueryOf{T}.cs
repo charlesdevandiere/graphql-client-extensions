@@ -143,9 +143,9 @@ namespace GraphQL.Client.Extensions
         /// <param name="key">The Parameter Name</param>
         /// <param name="where">The value of the parameter, primitive or object</param>
         /// <returns></returns>
-        public new IQuery<TSource> Where(string key, object where)
+        public new IQuery<TSource> SetArgument(string key, object where)
         {
-            base.Where(key, where);
+            base.SetArgument(key, where);
 
             return this;
         }
@@ -157,9 +157,25 @@ namespace GraphQL.Client.Extensions
         /// <returns>IQuery{TSource}</returns>
         /// <exception cref="ArgumentException">Dupe Key</exception>
         /// <exception cref="ArgumentNullException">Null Argument</exception>
-        public new IQuery<TSource> Where(Dictionary<string, object> dict)
+        public new IQuery<TSource> SetArguments(Dictionary<string, object> dict)
         {
-            base.Where(dict);
+            base.SetArguments(dict);
+
+            return this;
+        }
+
+        /// <sumary>
+        /// Sets arguments from object.
+        /// </sumary>
+        /// <typeparam name="TArguments">Arguments type</typeparam>
+        /// <param name="arguments">Arguments object</param>
+        public IQuery<TSource> SetArguments<TArguments>(TArguments arguments) where TArguments : class
+        {
+            PropertyInfo[] properties = typeof(TArguments).GetProperties();
+            foreach (PropertyInfo property in properties)
+            {
+                this.WhereMap.Add(this.GetPropertyName(property), property.GetValue(arguments));
+            }
 
             return this;
         }

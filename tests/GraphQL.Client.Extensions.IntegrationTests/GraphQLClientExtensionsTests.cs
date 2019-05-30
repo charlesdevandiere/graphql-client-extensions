@@ -92,7 +92,7 @@ namespace GraphQL.Client.Extensions.IntegrationTests
             subSelect
                 .Select(subSelList)
                 .Name("subDealer")
-                .Where(mySubDict)
+                .SetArguments(mySubDict)
                 .Comment("SubSelect Below!");
 
             // Add that subselect to the main select
@@ -140,7 +140,7 @@ namespace GraphQL.Client.Extensions.IntegrationTests
                 .Select(selList)
                 .Name("Dealer")
                 .Alias("myDealerAlias")
-                .Where(myDict)
+                .SetArguments(myDict)
                 .Comment("My First GQL Query with getit\na second line of comments\nand yet another line of comments");
 
             // Get and pack results

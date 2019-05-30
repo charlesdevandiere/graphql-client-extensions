@@ -150,7 +150,7 @@ namespace GraphQL.Client.Extensions.UnitTests
             Query query = new Query();
 
             // Act
-            query.Where("id", 1);
+            query.SetArgument("id", 1);
 
             // Assert
             Assert.AreEqual(1, query.WhereMap["id"]);
@@ -163,7 +163,7 @@ namespace GraphQL.Client.Extensions.UnitTests
             Query query = new Query();
 
             // Act
-            query.Where("name", "danny");
+            query.SetArgument("name", "danny");
 
             // Assert
             Assert.AreEqual("danny", query.WhereMap["name"]);
@@ -182,7 +182,7 @@ namespace GraphQL.Client.Extensions.UnitTests
             };
 
             // Act
-            query.Where("price", dict);
+            query.SetArgument("price", dict);
 
             // Assert
             Dictionary<string, int> queryWhere = (Dictionary<string, int>) query.WhereMap["price"];
@@ -205,9 +205,9 @@ namespace GraphQL.Client.Extensions.UnitTests
 
             // Act
             query
-                .Where("id", 123)
-                .Where("name", "danny")
-                .Where("price", dict);
+                .SetArgument("id", 123)
+                .SetArgument("name", "danny")
+                .SetArgument("price", dict);
 
             // Assert
             Dictionary<string, object> shouldPass = new Dictionary<string, object>()
@@ -321,7 +321,7 @@ namespace GraphQL.Client.Extensions.UnitTests
                 .Name(expectedFrom)
                 .Select(expectedSelect)
                 .Alias(expectedAlias)
-                .Where(expectedWhere)
+                .SetArguments(expectedWhere)
                 .Comment(expectedComment)
                 .Batch(batchQuery);
 

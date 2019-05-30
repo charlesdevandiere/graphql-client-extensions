@@ -189,7 +189,7 @@ namespace GraphQL.Client.Extensions
         /// <param name="key">The Parameter Name</param>
         /// <param name="where">The value of the parameter, primitive or object</param>
         /// <returns></returns>
-        public IQuery Where(string key, object where)
+        public IQuery SetArgument(string key, object where)
         {
             WhereMap.Add(key, where);
 
@@ -203,7 +203,7 @@ namespace GraphQL.Client.Extensions
         /// <returns>Query</returns>
         /// <exception cref="ArgumentException">Dupe Key</exception>
         /// <exception cref="ArgumentNullException">Null Argument</exception>
-        public IQuery Where(Dictionary<string, object> dict)
+        public IQuery SetArguments(Dictionary<string, object> dict)
         {
             foreach (KeyValuePair<string, object> field in dict)
                 WhereMap.Add(field.Key, field.Value);

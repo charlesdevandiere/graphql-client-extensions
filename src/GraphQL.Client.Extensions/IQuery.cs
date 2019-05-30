@@ -99,7 +99,7 @@ namespace GraphQL.Client.Extensions
         /// <param name="key">The Parameter Name</param>
         /// <param name="where">The value of the parameter, primitive or object</param>
         /// <returns></returns>
-        IQuery Where(string key, object where);
+        IQuery SetArgument(string key, object where);
 
         /// <summary>
         /// Add a dict of key value pairs &lt;string, object&gt; to the existing where part
@@ -107,7 +107,7 @@ namespace GraphQL.Client.Extensions
         /// <param name="dict">An existing Dictionary that takes &lt;string, object&gt;</param>
         /// <returns>Query</returns>
         /// <throws>DuplicateKeyException and others</throws>
-        IQuery Where(Dictionary<string, object> dict);
+        IQuery SetArguments(Dictionary<string, object> dict);
 
         /// <summary>
         /// Add additional queries to the request. These
