@@ -10,7 +10,7 @@ namespace GraphQL.Client.Extensions.UnitTests
         [TestMethod]
         public void TestSelect()
         {
-            var query = new Query<Car>();
+            var query = new Query<Car>("car");
             query.Select(c => c.Name);
 
             CollectionAssert.AreEqual(new List<string> { nameof(Car.Name) }, query.SelectList);
@@ -19,16 +19,16 @@ namespace GraphQL.Client.Extensions.UnitTests
         [TestMethod]
         public void TestSubSelect()
         {
-            var query = new Query<Car>();
+            var query = new Query<Car>("car");
             query.SubSelect(c => c.Color, sq => sq);
 
-            Assert.AreEqual(nameof(Car.Color), (query.SelectList[0] as IQuery).QueryName);
+            Assert.AreEqual(nameof(Car.Color), (query.SelectList[0] as IQuery<object>).Name);
         }
 
         [TestMethod]
         public void TestSelectWithCustomName()
         {
-            var query = new Query<Truck>();
+            var query = new Query<Truck>("truck");
             query.Select(t => t.Name);
 
             CollectionAssert.AreEqual(new List<string> { "name" }, query.SelectList);
@@ -37,16 +37,16 @@ namespace GraphQL.Client.Extensions.UnitTests
         [TestMethod]
         public void TestSubSelectWithCustomName()
         {
-            var query = new Query<Truck>();
+            var query = new Query<Truck>("truck");
             query.SubSelect(t => t.Load, sq => sq);
 
-            Assert.AreEqual("load", (query.SelectList[0] as IQuery).QueryName);
+            Assert.AreEqual("load", (query.SelectList[0] as IQuery<object>).Name);
         }
 
         [TestMethod]
         public void TestSelectWithCustomFormater()
         {
-            var query = new Query<Car>(options: new QueryOptions
+            var query = new Query<Car>("car", options: new QueryOptions
             {
                 Formater = QueryFormaters.CamelCaseFormater
             });
@@ -58,13 +58,13 @@ namespace GraphQL.Client.Extensions.UnitTests
         [TestMethod]
         public void TestSubSelectWithCustomFormater()
         {
-            var query = new Query<Car>(options: new QueryOptions
+            var query = new Query<Car>("car", options: new QueryOptions
             {
                 Formater = QueryFormaters.CamelCaseFormater
             });
             query.SubSelect(c => c.Color, sq => sq);
 
-            Assert.AreEqual("color", (query.SelectList[0] as IQuery).QueryName);
+            Assert.AreEqual("color", (query.SelectList[0] as IQuery<object>).Name);
         }
 
         [TestMethod]
@@ -80,19 +80,19 @@ namespace GraphQL.Client.Extensions.UnitTests
                         .Select(color => color.Green)
                         .Select(color => color.Blue));
 
-            Assert.AreEqual(nameof(Car), query.QueryName);
+            Assert.AreEqual(nameof(Car), query.Name);
             Assert.AreEqual(3, query.SelectList.Count);
             Assert.AreEqual(nameof(Car.Name), query.SelectList[0]);
             Assert.AreEqual(nameof(Car.Price), query.SelectList[1]);
 
-            Assert.AreEqual(nameof(Car.Color), (query.SelectList[2] as IQuery).QueryName);
+            Assert.AreEqual(nameof(Car.Color), (query.SelectList[2] as IQuery<object>).Name);
             var expectedSubSelectList = new List<string>
             {
                 nameof(Color.Red),
                 nameof(Color.Green),
                 nameof(Color.Blue)
             };
-            CollectionAssert.AreEqual(expectedSubSelectList, (query.SelectList[2] as IQuery).SelectList);
+            CollectionAssert.AreEqual(expectedSubSelectList, (query.SelectList[2] as IQuery<object>).SelectList);
         }
 
         [TestMethod]
@@ -106,17 +106,17 @@ namespace GraphQL.Client.Extensions.UnitTests
                     sq => sq
                         .Select(load => load.Weight));
 
-            Assert.AreEqual("truck", query.QueryName);
+            Assert.AreEqual("truck", query.Name);
             Assert.AreEqual(3, query.SelectList.Count);
             Assert.AreEqual("name", query.SelectList[0]);
             Assert.AreEqual("weelsNumber", query.SelectList[1]);
 
-            Assert.AreEqual("load", (query.SelectList[2] as IQuery).QueryName);
+            Assert.AreEqual("load", (query.SelectList[2] as IQuery<object>).Name);
             var expectedSubSelectList = new List<string>
             {
                 "weight"
             };
-            CollectionAssert.AreEqual(expectedSubSelectList, (query.SelectList[2] as IQuery).SelectList);
+            CollectionAssert.AreEqual(expectedSubSelectList, (query.SelectList[2] as IQuery<object>).SelectList);
         }
     }
 }

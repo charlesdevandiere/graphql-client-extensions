@@ -14,8 +14,7 @@ namespace GraphQL.Client.Extensions.UnitTests
         public void Select_StringList_AddsToQuery()
         {
             // Arrange
-
-            Query query = new Query();
+            var query = new Query<object>("something");
 
             List<string> selectList = new List<string>()
             {
@@ -24,7 +23,10 @@ namespace GraphQL.Client.Extensions.UnitTests
             };
 
             // Act
-            query.Select(selectList);
+            foreach( string field in selectList)
+            {
+                query.Select(field);
+            }
 
             // Assert
             CollectionAssert.AreEqual(selectList, query.SelectList);
@@ -34,22 +36,19 @@ namespace GraphQL.Client.Extensions.UnitTests
         public void From_String_AddsToQuery()
         {
             // Arrange
-            Query query = new Query();
-
             const string name = "user";
 
-            // Act
-            query.Name(name);
+            var query = new Query<object>(name);
 
             // Assert
-            Assert.AreEqual(name, query.QueryName);
+            Assert.AreEqual(name, query.Name);
         }
 
         [TestMethod]
         public void Select_String_AddsToQuery()
         {
             // Arrange
-            Query query = new Query();
+            var query = new Query<object>("something");
 
             const string select = "id";
 
@@ -64,10 +63,10 @@ namespace GraphQL.Client.Extensions.UnitTests
         public void Select_DynamicArguments_AddsToQuery()
         {
             // Arrange
-            Query query = new Query();
+            var query = new Query<object>("something");
 
             // Act
-            query.Select("some", "thing", "else");
+            query.Select("some").Select("thing").Select("else");
 
             // Assert
             List<string> shouldEqual = new List<string>()
@@ -83,7 +82,7 @@ namespace GraphQL.Client.Extensions.UnitTests
         public void Select_ArrayOfString_AddsToQuery()
         {
             // Arrange
-            Query query = new Query();
+            var query = new Query<object>("something");
 
             string[] selects =
             {
@@ -92,7 +91,10 @@ namespace GraphQL.Client.Extensions.UnitTests
             };
 
             // Act
-            query.Select(selects);
+            foreach (string field in selects)
+            {
+                query.Select(field);
+            }
 
             // Assert
             List<string> shouldEqual = new List<string>()
@@ -107,7 +109,7 @@ namespace GraphQL.Client.Extensions.UnitTests
         public void Select_ChainCombinationOfStringAndList_AddsToQuery()
         {
             // Arrange
-            Query query = new Query();
+            var query = new Query<object>("something");
 
             const string select = "id";
             List<string> selectList = new List<string>()
@@ -122,11 +124,16 @@ namespace GraphQL.Client.Extensions.UnitTests
             };
 
             // Act
-            query
-                .Select(select)
-                .Select(selectList)
-                .Select("some", "thing", "else")
-                .Select(selectStrings);
+            query.Select(select);
+            foreach (string field in selectList)
+            {
+                query.Select(field);
+            }
+            query.Select("some").Select("thing").Select("else");
+            foreach (string field in selectStrings)
+            {
+                query.Select(field);
+            }
 
             // Assert
             List<string> shouldEqual = new List<string>()
@@ -147,33 +154,33 @@ namespace GraphQL.Client.Extensions.UnitTests
         public void Where_IntegerArgumentWhere_AddsToWhere()
         {
             // Arrange
-            Query query = new Query();
+            var query = new Query<object>("something");
 
             // Act
             query.SetArgument("id", 1);
 
             // Assert
-            Assert.AreEqual(1, query.WhereMap["id"]);
+            Assert.AreEqual(1, query.ArgumentsMap["id"]);
         }
 
         [TestMethod]
         public void Where_StringArgumentWhere_AddsToWhere()
         {
             // Arrange
-            Query query = new Query();
+            var query = new Query<object>("something");
 
             // Act
             query.SetArgument("name", "danny");
 
             // Assert
-            Assert.AreEqual("danny", query.WhereMap["name"]);
+            Assert.AreEqual("danny", query.ArgumentsMap["name"]);
         }
 
         [TestMethod]
         public void Where_DictionaryArgumentWhere_AddsToWhere()
         {
             // Arrange
-            Query query = new Query();
+            var query = new Query<object>("something");
 
             Dictionary<string, int> dict = new Dictionary<string, int>()
             {
@@ -185,17 +192,17 @@ namespace GraphQL.Client.Extensions.UnitTests
             query.SetArgument("price", dict);
 
             // Assert
-            Dictionary<string, int> queryWhere = (Dictionary<string, int>) query.WhereMap["price"];
+            Dictionary<string, int> queryWhere = (Dictionary<string, int>) query.ArgumentsMap["price"];
             Assert.AreEqual(1, queryWhere["from"]);
             Assert.AreEqual(100, queryWhere["to"]);
-            CollectionAssert.AreEqual(dict, (ICollection) query.WhereMap["price"]);
+            CollectionAssert.AreEqual(dict, (ICollection) query.ArgumentsMap["price"]);
         }
 
         [TestMethod]
         public void Where_ChainedWhere_AddsToWhere()
         {
             // Arrange
-            Query query = new Query();
+            var query = new Query<object>("something");
 
             Dictionary<string, int> dict = new Dictionary<string, int>()
             {
@@ -216,14 +223,14 @@ namespace GraphQL.Client.Extensions.UnitTests
                 {"name", "danny"},
                 {"price", dict}
             };
-            CollectionAssert.AreEqual(shouldPass, query.WhereMap);
+            CollectionAssert.AreEqual(shouldPass, query.ArgumentsMap);
         }
 
         [TestMethod]
         public void Check_Required_Select()
         {
             // Arrange
-            Query query = new Query();
+            var query = new Query<object>("something");
 
             // Act
             query
@@ -237,134 +244,10 @@ namespace GraphQL.Client.Extensions.UnitTests
         public void Check_Required_Name()
         {
             // Arrange
-            Query query = new Query();
-
-            // Act
-            query
-                .Name("something");
+            var query = new Query<object>("something");
 
             // Assert
             Assert.ThrowsException<ArgumentException>(() => query.ToString());
-        }
-
-        [TestMethod]
-        public void Check_RawNotRequired_Match()
-        {
-            // Arrange
-            Query query = new Query();
-
-            const string rawStr = "something(a:123){id}";
-
-            // Act
-            query
-                .Raw(rawStr);
-
-            // Assert
-            Assert.AreEqual(rawStr, query.ToString());
-        }
-
-        [TestMethod]
-        public void Check_RawBraces_Match()
-        {
-            // Arrange
-            Query query = new Query();
-
-            const string rawStr = "{something(a:123){id}}";
-            const string expectedRawStr = "something(a:123){id}";
-
-            // Act
-            query
-                .Raw(rawStr);
-
-            // Assert
-            Assert.AreEqual(expectedRawStr, query.ToString());
-        }
-
-        [TestMethod]
-        public void Check_WhiteSpaceRawBraces_Match()
-        {
-            // Arrange
-            Query query = new Query();
-
-            const string rawStr = "   {something(a:123){id}}   ";
-            const string expectedRawStr = "   something(a:123){id}   ";
-
-            // Act
-            query
-                .Raw(rawStr);
-
-            // Assert
-            Assert.AreEqual(expectedRawStr, query.ToString());
-        }
-
-        [TestMethod] public void Check_Clear()
-        {
-            // Arrange
-            IQuery query = new Query();
-            IQuery batchQuery = new Query();
-
-            const string expectedSelect = "field";
-            const string expectedFrom = "haystack";
-            const string expectedAlias = "calhoon";
-            const string expectedComment = "this is a comment";
-            const string expectedBatchQuery = "someEndpoint(id:1){name}";
-
-            Dictionary<string, object> expectedWhere = new Dictionary<string, object>()
-            {
-                {"dog", "cat"},
-                {"limit", 3}
-            };
-
-            // Act
-            batchQuery.Raw(expectedBatchQuery);
-            query
-                .Name(expectedFrom)
-                .Select(expectedSelect)
-                .Alias(expectedAlias)
-                .SetArguments(expectedWhere)
-                .Comment(expectedComment)
-                .Batch(batchQuery);
-
-            // Assert to validate stuff has been set first!
-            Assert.AreEqual(expectedFrom, query.QueryName);
-            Assert.AreEqual(expectedAlias, query.AliasName);
-            CollectionAssert.AreEqual(expectedWhere, query.WhereMap);
-            Assert.AreEqual(expectedSelect, query.SelectList.First());
-            Assert.AreEqual(1, query.BatchQueryList.Count);
-
-            // Re-act again to clear, this is the actual test...
-            query.Clear();
-
-            string emptyStr = string.Empty;
-            expectedWhere.Clear();
-
-            // Assert it's all empty
-            Assert.AreEqual(emptyStr, query.QueryName);
-            Assert.AreEqual(emptyStr, query.AliasName);
-            CollectionAssert.AreEqual(expectedWhere, query.WhereMap);
-            Assert.AreEqual(0, query.SelectList.Count);
-            Assert.AreEqual(emptyStr, query.QueryComment);
-            Assert.AreEqual(0, query.BatchQueryList.Count);
-        }
-
-        [TestMethod]
-        public void Check_Raw_Build()
-        {
-            // Arrange
-            IQuery query = new Query();
-
-            const string expectedRawQuery = "query{Version}";
-
-            // Act
-            query
-                .Name("Should Not Exists")
-                .Raw(expectedRawQuery);
-
-            // Assert it's exists and returned on build
-
-            Assert.AreEqual(expectedRawQuery, query.RawQuery);
-            Assert.AreEqual(expectedRawQuery, query.ToString());
-            Assert.AreEqual(string.Empty, query.QueryName);
         }
     }
 }

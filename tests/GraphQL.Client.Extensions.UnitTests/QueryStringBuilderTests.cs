@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using GraphQL.Client.Extensions.UnitTests.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace GraphQL.Client.Extensions.UnitTests
@@ -185,7 +186,7 @@ namespace GraphQL.Client.Extensions.UnitTests
         public void Where_QueryString_ParseQueryString()
         {
             // Arrange
-            Query query = new Query();
+            Query<Car> query = new Query<Car>("test1");
 
             List<object> objList = new List<object>(new object[] { "aa", "bb", "cc" });
             EnumHelper enumHaystack = new EnumHelper("HAYstack");
@@ -206,7 +207,6 @@ namespace GraphQL.Client.Extensions.UnitTests
             };
 
             query
-                .Name("test1")
                 .Select("name")
                 .SetArguments(nestedListMap);
 
@@ -225,7 +225,7 @@ namespace GraphQL.Client.Extensions.UnitTests
         public void Where_ClearQueryString_EmptyQueryString()
         {
             // Arrange
-            IQuery query = new Query();
+            var query = new Query<object>("test1");
 
             List<object> objList = new List<object>(new object[] { "aa", "bb", "cc" });
             EnumHelper enumHaystack = new EnumHelper("HAYstack");
@@ -246,7 +246,6 @@ namespace GraphQL.Client.Extensions.UnitTests
             };
 
             query
-                .Name("test1")
                 .Select("name")
                 .SetArguments(nestedListMap);
 
@@ -265,8 +264,8 @@ namespace GraphQL.Client.Extensions.UnitTests
         public void Select_QueryString_ParseQueryString()
         {
             // Arrange
-            IQuery query = new Query();
-            IQuery subSelect = new Query();
+            var query = new Query<object>("test1");
+            var subSelect = new Query<object>("subSelect");
 
             EnumHelper gqlEnumEnabled = new EnumHelper().Enum("ENABLED");
             EnumHelper gqlEnumDisabled = new EnumHelper("DISABLED");
@@ -284,15 +283,12 @@ namespace GraphQL.Client.Extensions.UnitTests
 
             subSelect
                 .Select(subSelList)
-                .Name("subSelect")
                 .SetArguments(mySubDict);
 
             // create a sub-select too
             List<object> selList = new List<object>(new object[] { "id", subSelect, "name", "make", "model" });
 
-            query
-                .Name("test1")
-                .Select("more", "things", "in_a_select")
+            query.Select("more").Select("things").Select("in_a_select")
                 .Select(selList);
 
             // Act
@@ -304,25 +300,11 @@ namespace GraphQL.Client.Extensions.UnitTests
         }
 
         [TestMethod]
-        public void Comment_AddComment_Match()
-        {
-            // Arrange
-            QueryStringBuilder queryString = new QueryStringBuilder();
-
-            // Act
-            queryString.AddComments("A Simple Comment\nSecond Line");
-            string addCommentsStr = RemoveWhitespace(queryString.QueryString.ToString());
-
-            // Assert
-            Assert.AreEqual(RemoveWhitespace("#ASimpleComment#SecondLine"), addCommentsStr);
-        }
-
-        [TestMethod]
         public void Build_AllElements_StringMatch()
         {
             // Arrange
-            Query query = new Query();
-            Query subSelect = new Query();
+            var query = new Query<object>("test1");
+            var subSelect = new Query<object>("subSelect");
 
             EnumHelper gqlEnumEnabled = new EnumHelper().Enum("ENABLED");
             EnumHelper gqlEnumDisabled = new EnumHelper("DISABLED");
@@ -340,17 +322,13 @@ namespace GraphQL.Client.Extensions.UnitTests
 
             subSelect
                 .Select(subSelList)
-                .Name("subSelect")
                 .SetArguments(mySubDict);
 
             List<object> selList = new List<object>(new object[] { "id", subSelect, "name", "make", "model" });
 
-            query
-                .Name("test1")
-                .Alias("test1Alias")
-                .Select("more", "things", "in_a_select")
+            query.Alias("test1Alias")
+                .Select("more").Select("things").Select("in_a_select")
                 .Select(selList)
-                .Comment("A single line Comment");
 
             IQueryStringBuilder queryString = query.Builder;
 

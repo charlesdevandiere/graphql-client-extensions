@@ -7,27 +7,27 @@ namespace GraphQL.Client.Extensions
     /// <summary>
     /// Query of TSource interface
     /// </summary>
-    public interface IQuery<TSource> : IQuery where TSource : class
+    public interface IQuery<TSource> where TSource : class
     {
         /// <summary>
-        /// Accepts a string and will use this as the query. Setting
-        /// this will override any other settings and ignore any
-        /// validation checks. If the string is empty it will be
-        /// ignored and the existing query builder actions will be
-        /// at play.
-        ///
-        /// WARNING : Calling this will clear all other query elements.
-        ///
+        /// Gets the select list.
         /// </summary>
-        /// <param name="rawQuery">The full valid query to be sent to the endpoint</param>
-        new IQuery<TSource> Raw(string rawQuery);
+        List<object> SelectList { get; }
 
         /// <summary>
-        /// Sets the query Name
+        /// Gets the arguments map.
         /// </summary>
-        /// <param name="queryName">The Query Name String</param>
-        /// <returns>Query</returns>
-        new IQuery<TSource> Name(string queryName);
+        Dictionary<string, object> ArgumentsMap { get; }
+
+        /// <summary>
+        /// Gets the query name.
+        /// </summary>
+        string Name { get; }
+
+        /// <summary>
+        /// Gets the alias name.
+        /// </summary>
+        string AliasName { get; }
 
         /// <summary>
         /// Sets the Query Alias name. This is used in graphQL to allow
@@ -39,38 +39,32 @@ namespace GraphQL.Client.Extensions
         /// </summary>
         /// <param name="alias">The alias name</param>
         /// <returns>Query</returns>
-        new IQuery<TSource> Alias(string alias);
+        IQuery<TSource> Alias(string alias);
 
         /// <summary>
-        /// Add a comment to the Query. This will take a simple string comment
-        /// and add it to the Select block in the query. GraphQL formatting will
-        /// be automatically added. Multi-line comments can be done with the
-        /// '\n' character and it will be automatically converted into a GraphQL
-        /// multi-line comment
+        /// Add a field to the select list of the query.
         /// </summary>
-        /// <param name="comment">The comment string</param>
-        /// <returns>Query</returns>
-        new IQuery<TSource> Comment(string comment);
-
-        /// <summary>
-        /// Add this property to the select part of the query. This
-        /// accepts any property of source object
-        /// </summary>
-        /// <typeparam name="TProperty">Select property type</typeparam>
-        /// <param name="lambda">Property selector to build select fields</param>
+        /// <typeparam name="TProperty">Field property type</typeparam>
+        /// <param name="selector">Field selector</param>
         /// <returns>IQuery{TSource}</returns>
-        IQuery<TSource> Select<TProperty>(Expression<Func<TSource, TProperty>> lambda);
+        IQuery<TSource> Select<TProperty>(Expression<Func<TSource, TProperty>> selector);
 
         /// <summary>
-        /// Adds a sub query to the list
+        /// Add a field to the select list of the query.
         /// </summary>
-        /// <param name="lambda">The name of the sub query</param>
-        /// <param name="buildSubSelect">The sub query builder</param>
-        /// <returns>Query</returns>
-        /// <exception cref="ArgumentException"></exception>
+        /// <param name="field">Field name</param>
+        /// <returns>IQuery{TSource}</returns>
+        IQuery<TSource> Select(string field);
+
+        /// <summary>
+        /// Generates a sub select query from child object property
+        /// </summary>
+        /// <typeparam name="TSubSource">Sub query source type</typeparam>
+        /// <param name="selector">Child object property selector</param>
+        /// <param name="buildSubQuery">Build sub query</param>
         IQuery<TSource> SubSelect<TSubSource>(
-            Expression<Func<TSource, TSubSource>> lambda,
-            Func<IQuery<TSubSource>, IQuery<TSubSource>> buildSubSelect)
+            Expression<Func<TSource, TSubSource>> selector,
+            Func<IQuery<TSubSource>, IQuery<TSubSource>> buildSubQuery)
             where TSubSource : class;
 
         /// <summary>
@@ -83,7 +77,7 @@ namespace GraphQL.Client.Extensions
         /// <param name="key">The Parameter Name</param>
         /// <param name="where">The value of the parameter, primitive or object</param>
         /// <returns></returns>
-        new IQuery<TSource> SetArgument(string key, object where);
+        IQuery<TSource> SetArgument(string key, object where);
 
         /// <summary>
         /// Add a dict of key value pairs &lt;string, object&gt; to the existing where part
@@ -91,7 +85,7 @@ namespace GraphQL.Client.Extensions
         /// <param name="dict">An existing Dictionary that takes &lt;string, object&gt;</param>
         /// <returns>Query</returns>
         /// <throws>DuplicateKeyException and others</throws>
-        new IQuery<TSource> SetArguments(Dictionary<string, object> dict);
+        IQuery<TSource> SetArguments(Dictionary<string, object> dict);
 
         /// <sumary>
         /// Sets arguments from object.
@@ -99,20 +93,13 @@ namespace GraphQL.Client.Extensions
         /// <typeparam name="TArguments">Arguments type</typeparam>
         /// <param name="arguments">Arguments object</param>
         IQuery<TSource> SetArguments<TArguments>(TArguments arguments) where TArguments : class;
-
+        
         /// <summary>
-        /// Add additional queries to the request. These
-        /// will get bundled in as additional queries. This
-        /// will affect the query that is executed in the Get()
-        /// method and the ToString() output, but will not
-        /// change any items specific to this query. Each
-        /// query will individually be calling it's ToString()
-        /// to get the query to be batched. Use Alias names
-        /// where appropriate
+        /// Builds the query.
         /// </summary>
-        /// <param name="query"></param>
-        /// <returns>IQuery</returns>
-        // ReSharper disable once UnusedMethodReturnValue.Global
-        new IQuery<TSource> Batch(IQuery query);
+        /// <returns>The GraphQL Query String, without outer enclosing block</returns>
+        /// <exception cref="ArgumentException">Must have a 'Name' specified in the Query</exception>
+        /// <exception cref="ArgumentException">Must have a one or more 'Select' fields in the Query</exception>
+        string Build();
     }
 }

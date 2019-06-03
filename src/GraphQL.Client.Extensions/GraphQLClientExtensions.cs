@@ -30,7 +30,7 @@ namespace GraphQL.Client.Extensions
         /// <returns>The type of object stuffed with data from the query</returns>
         /// <exception cref="ArgumentException">Dupe Key, missing parts or empty parts of a query</exception>
         /// <exception cref="ArgumentNullException">Invalid Configuration</exception>
-        public static async Task<T> Get<T>(this GraphQLClient gqlClient, IQuery query, string resultName = null)
+        public static async Task<T> Get<T>(this GraphQLClient gqlClient, IQuery<T> query, string resultName = null) where T : class
         {
             GraphQLRequest gqlQuery = CreateGraphQLResquest(query);
 
@@ -56,7 +56,7 @@ namespace GraphQL.Client.Extensions
         /// <returns>The type of object stuffed with data from the query</returns>
         /// <exception cref="ArgumentException">Dupe Key, missing parts or empty parts of a query</exception>
         /// <exception cref="ArgumentNullException">Invalid Configuration</exception>
-        public static async Task<T> Post<T>(this GraphQLClient gqlClient, IQuery query, string resultName = null)
+        public static async Task<T> Post<T>(this GraphQLClient gqlClient, IQuery<T> query, string resultName = null) where T : class
         {
             GraphQLRequest gqlQuery = CreateGraphQLResquest(query);
 
@@ -67,7 +67,7 @@ namespace GraphQL.Client.Extensions
             return ParseResponse<T>(query, ref resultName, gqlQuery, gqlResp);
         }
 
-        private static T ParseResponse<T>(IQuery query, ref string resultName, GraphQLRequest gqlQuery, GraphQLResponse gqlResp)
+        private static T ParseResponse<T>(IQuery<T> query, ref string resultName, GraphQLRequest gqlQuery, GraphQLResponse gqlResp) where T : class
         {
             // check for no results, this is an odd case but should be caught
 
@@ -100,7 +100,7 @@ namespace GraphQL.Client.Extensions
 
             if (resultName == null)
             {
-                resultName = string.IsNullOrWhiteSpace(query.AliasName) ? query.QueryName : query.AliasName;
+                resultName = string.IsNullOrWhiteSpace(query.AliasName) ? query.Name : query.AliasName;
             }
 
             // Let the client do the mapping , all sorts of things can throw at this point!
@@ -133,7 +133,7 @@ namespace GraphQL.Client.Extensions
             }
         }
 
-        private static GraphQLRequest CreateGraphQLResquest(IQuery query)
+        private static GraphQLRequest CreateGraphQLResquest<T>(IQuery<T> query) where T : class
         {
             return new GraphQLRequest { Query = "{" + query.ToString() + "}" };
         }

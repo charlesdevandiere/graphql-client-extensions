@@ -36,7 +36,7 @@ namespace GraphQL.Client.Extensions
         /// resolve nested structures
         /// </summary>
         /// <param name="query">The Query</param>
-        void AddParams(IQuery query);
+        void AddParams<TSource>(IQuery<TSource> query) where TSource : class;
 
         /// <summary>
         /// Adds fields to the query sting. This will use the SelectList
@@ -46,17 +46,7 @@ namespace GraphQL.Client.Extensions
         /// </summary>
         /// <param name="query">The Query</param>
         /// <param name="indent">Indent characters, default 0</param>
-        void AddFields(IQuery query, int indent = 0);
-
-        /// <summary>
-        /// Adds a comment to the Select list part of the Query. Comments
-        /// may be separated by a newline and those will expand to individual
-        /// comment line. Formatting for graphQL '#' comments will happen here
-        /// </summary>
-        /// <param name="comments">Simple Comment</param>
-        /// <param name="indent">Indent characters, default 0</param>
-        // ReSharper disable once UnusedMemberInSuper.Global
-        void AddComments(string comments, int indent = 0);
+        void AddFields<TSource>(IQuery<TSource> query, int indent = 0) where TSource : class;
 
         /// <summary>
         /// Build the entire query into a string. This will take
@@ -67,6 +57,6 @@ namespace GraphQL.Client.Extensions
         /// <param name="query">The Query</param>
         /// <param name="indent">Indent characters, default = 0</param>
         /// <returns>GraphQL query string without outer block</returns>
-        string Build(IQuery query, int indent = 0);
+        string Build<TSource>(IQuery<TSource> query, int indent = 0) where TSource : class;
     }
 }
