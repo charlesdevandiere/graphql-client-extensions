@@ -230,14 +230,11 @@ namespace GraphQL.Client.Extensions.UnitTests
         public void Check_Required_Select()
         {
             // Arrange
-            var query = new Query<object>("something");
-
-            // Act
-            query
+            var query = new Query<object>(null)
                 .Select("something");
 
             // Assert
-            Assert.ThrowsException<ArgumentException>(() => query.ToString());
+            Assert.ThrowsException<ArgumentException>(() => query.Build());
         }
 
         [TestMethod]
@@ -247,7 +244,7 @@ namespace GraphQL.Client.Extensions.UnitTests
             var query = new Query<object>("something");
 
             // Assert
-            Assert.ThrowsException<ArgumentException>(() => query.ToString());
+            Assert.ThrowsException<ArgumentException>(() => query.Build());
         }
     }
 }

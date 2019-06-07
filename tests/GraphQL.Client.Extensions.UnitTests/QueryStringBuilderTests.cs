@@ -14,7 +14,7 @@ namespace GraphQL.Client.Extensions.UnitTests
         {
             CultureInfo.CurrentCulture = new CultureInfo("en-us", false);
         }
-        
+
         private static string RemoveWhitespace(string input)
         {
             return new string(input.ToCharArray()
@@ -176,7 +176,7 @@ namespace GraphQL.Client.Extensions.UnitTests
             };
 
             // Act
-            string nestedListMapStr= queryString.BuildQueryParam(nestedListMap);
+            string nestedListMapStr = queryString.BuildQueryParam(nestedListMap);
 
             // Assert
             Assert.AreEqual("{from:123, to:454, recurse:[\"aa\", \"bb\", \"cc\"], map:{from:444.45, to:555.45}, name:HAYstack}", nestedListMapStr);
@@ -264,13 +264,10 @@ namespace GraphQL.Client.Extensions.UnitTests
         public void Select_QueryString_ParseQueryString()
         {
             // Arrange
-            var query = new Query<object>("test1");
             var subSelect = new Query<object>("subSelect");
 
             EnumHelper gqlEnumEnabled = new EnumHelper().Enum("ENABLED");
             EnumHelper gqlEnumDisabled = new EnumHelper("DISABLED");
-
-            List<object> subSelList = new List<object>(new object[] { "subName", "subMake", "subModel" });
 
             Dictionary<string, object> mySubDict = new Dictionary<string, object>
             {
@@ -281,35 +278,31 @@ namespace GraphQL.Client.Extensions.UnitTests
                 {"SuperQuerySpeed", gqlEnumEnabled }
             };
 
-            subSelect
-                .Select(subSelList)
-                .SetArguments(mySubDict);
-
-            // create a sub-select too
-            List<object> selList = new List<object>(new object[] { "id", subSelect, "name", "make", "model" });
-
-            query.Select("more").Select("things").Select("in_a_select")
-                .Select(selList);
+            var query = new Query<object>("test1")
+                .Select("more")
+                .Select("things")
+                .Select("in_a_select")
+                .SubSelect<object>("subSelect", q => q
+                    .Select("subName")
+                    .Select("subMake")
+                    .Select("subModel")
+                    .SetArguments(mySubDict));
 
             // Act
-            query.Builder.AddFields(query);
-            string addParamStr = RemoveWhitespace(query.Builder.QueryString.ToString());
+            var builder = new QueryStringBuilder();
+            builder.AddFields(query);
+            string addParamStr = RemoveWhitespace(builder.QueryString.ToString());
 
             // Assert
-            Assert.AreEqual(RemoveWhitespace("morethingsin_a_selectidsubSelect(subMake:\"aston martin\",subState:\"ca\",subLimit:1,__debug:DISABLED,SuperQuerySpeed:ENABLED){subNamesubMakesubModel}namemakemodel"), addParamStr);
+            Assert.AreEqual(RemoveWhitespace("morethingsin_a_selectsubSelect(subMake:\"aston martin\",subState:\"ca\",subLimit:1,__debug:DISABLED,SuperQuerySpeed:ENABLED){subNamesubMakesubModel}"), addParamStr);
         }
 
         [TestMethod]
         public void Build_AllElements_StringMatch()
         {
             // Arrange
-            var query = new Query<object>("test1");
-            var subSelect = new Query<object>("subSelect");
-
             EnumHelper gqlEnumEnabled = new EnumHelper().Enum("ENABLED");
             EnumHelper gqlEnumDisabled = new EnumHelper("DISABLED");
-
-            List<object> subSelList = new List<object>(new object[] { "subName", "subMake", "subModel" });
 
             Dictionary<string, object> mySubDict = new Dictionary<string, object>
             {
@@ -320,23 +313,22 @@ namespace GraphQL.Client.Extensions.UnitTests
                 {"SuperQuerySpeed", gqlEnumEnabled }
             };
 
-            subSelect
-                .Select(subSelList)
-                .SetArguments(mySubDict);
-
-            List<object> selList = new List<object>(new object[] { "id", subSelect, "name", "make", "model" });
-
-            query.Alias("test1Alias")
-                .Select("more").Select("things").Select("in_a_select")
-                .Select(selList)
-
-            IQueryStringBuilder queryString = query.Builder;
+            var query = new Query<object>("test1")
+                .Alias("test1Alias")
+                .Select("more")
+                .Select("things")
+                .Select("in_a_select")
+                .SubSelect<object>("subSelect", q => q
+                    .Select("subName")
+                    .Select("subMake")
+                    .Select("subModel")
+                    .SetArguments(mySubDict));
 
             // Act
-            string buildStr = RemoveWhitespace(queryString.Build(query));
+            string buildStr = RemoveWhitespace(query.Build());
 
             // Assert
-            Assert.AreEqual(RemoveWhitespace("test1Alias:test1{#AsinglelineCommentmorethingsin_a_selectidsubSelect(subMake:\"aston martin\",subState:\"ca\",subLimit:1,__debug:DISABLED,SuperQuerySpeed:ENABLED){subNamesubMakesubModel}namemakemodel}"), buildStr);
+            Assert.AreEqual(RemoveWhitespace("test1Alias:test1{morethingsin_a_selectsubSelect(subMake:\"aston martin\",subState:\"ca\",subLimit:1,__debug:DISABLED,SuperQuerySpeed:ENABLED){subNamesubMakesubModel}}"), buildStr);
         }
     }
 }

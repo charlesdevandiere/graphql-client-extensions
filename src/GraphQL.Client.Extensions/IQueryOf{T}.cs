@@ -68,6 +68,17 @@ namespace GraphQL.Client.Extensions
             where TSubSource : class;
 
         /// <summary>
+        /// Generates a sub select query
+        /// </summary>
+        /// <typeparam name="TSubSource">Sub query source type</typeparam>
+        /// <param name="field">Field name</param>
+        /// <param name="buildSubQuery">Build sub query</param>
+        IQuery<TSource> SubSelect<TSubSource>(
+            string field,
+            Func<IQuery<TSubSource>, IQuery<TSubSource>> buildSubQuery)
+            where TSubSource : class;
+
+        /// <summary>
         /// Sets up the Parameters part of the GraphQL query. This
         /// accepts a key and a where part that will go into the
         /// list for later construction into the query. The where part

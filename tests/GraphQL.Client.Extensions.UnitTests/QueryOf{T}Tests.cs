@@ -22,7 +22,7 @@ namespace GraphQL.Client.Extensions.UnitTests
             var query = new Query<Car>("car");
             query.SubSelect(c => c.Color, sq => sq);
 
-            Assert.AreEqual(nameof(Car.Color), (query.SelectList[0] as IQuery<object>).Name);
+            Assert.AreEqual(nameof(Car.Color), (query.SelectList[0] as IQuery<Color>).Name);
         }
 
         [TestMethod]
@@ -40,7 +40,7 @@ namespace GraphQL.Client.Extensions.UnitTests
             var query = new Query<Truck>("truck");
             query.SubSelect(t => t.Load, sq => sq);
 
-            Assert.AreEqual("load", (query.SelectList[0] as IQuery<object>).Name);
+            Assert.AreEqual("load", (query.SelectList[0] as IQuery<Load>).Name);
         }
 
         [TestMethod]
@@ -64,7 +64,7 @@ namespace GraphQL.Client.Extensions.UnitTests
             });
             query.SubSelect(c => c.Color, sq => sq);
 
-            Assert.AreEqual("color", (query.SelectList[0] as IQuery<object>).Name);
+            Assert.AreEqual("color", (query.SelectList[0] as IQuery<Color>).Name);
         }
 
         [TestMethod]
@@ -85,14 +85,14 @@ namespace GraphQL.Client.Extensions.UnitTests
             Assert.AreEqual(nameof(Car.Name), query.SelectList[0]);
             Assert.AreEqual(nameof(Car.Price), query.SelectList[1]);
 
-            Assert.AreEqual(nameof(Car.Color), (query.SelectList[2] as IQuery<object>).Name);
+            Assert.AreEqual(nameof(Car.Color), (query.SelectList[2] as IQuery<Color>).Name);
             var expectedSubSelectList = new List<string>
             {
                 nameof(Color.Red),
                 nameof(Color.Green),
                 nameof(Color.Blue)
             };
-            CollectionAssert.AreEqual(expectedSubSelectList, (query.SelectList[2] as IQuery<object>).SelectList);
+            CollectionAssert.AreEqual(expectedSubSelectList, (query.SelectList[2] as IQuery<Color>).SelectList);
         }
 
         [TestMethod]
@@ -111,12 +111,12 @@ namespace GraphQL.Client.Extensions.UnitTests
             Assert.AreEqual("name", query.SelectList[0]);
             Assert.AreEqual("weelsNumber", query.SelectList[1]);
 
-            Assert.AreEqual("load", (query.SelectList[2] as IQuery<object>).Name);
+            Assert.AreEqual("load", (query.SelectList[2] as IQuery<Load>).Name);
             var expectedSubSelectList = new List<string>
             {
                 "weight"
             };
-            CollectionAssert.AreEqual(expectedSubSelectList, (query.SelectList[2] as IQuery<object>).SelectList);
+            CollectionAssert.AreEqual(expectedSubSelectList, (query.SelectList[2] as IQuery<Load>).SelectList);
         }
     }
 }

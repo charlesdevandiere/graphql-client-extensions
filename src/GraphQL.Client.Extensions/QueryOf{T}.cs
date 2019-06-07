@@ -134,7 +134,30 @@ namespace GraphQL.Client.Extensions
             PropertyInfo property = GetPropertyInfo(selector);
             string name = GetPropertyName(property);
 
-            var query = new Query<TSubSource>(name, this.options);
+            return SubSelect(name, buildSubQuery);
+        }
+
+        /// <summary>
+        /// Generates a sub select query
+        /// </summary>
+        /// <typeparam name="TSubSource">Sub query source type</typeparam>
+        /// <param name="field">Field name</param>
+        /// <param name="buildSubQuery">Build sub query</param>
+        public IQuery<TSource> SubSelect<TSubSource>(
+            string field,
+            Func<IQuery<TSubSource>, IQuery<TSubSource>> buildSubQuery)
+            where TSubSource : class
+        {
+            if (string.IsNullOrWhiteSpace(field))
+            {
+                throw new ArgumentNullException(nameof(field));
+            }
+            if (buildSubQuery == null)
+            {
+                throw new ArgumentNullException(nameof(buildSubQuery));
+            }
+
+            var query = new Query<TSubSource>(field, this.options);
             IQuery<TSubSource> subQuery = buildSubQuery.Invoke(query);
 
             this.SelectList.Add(subQuery);
