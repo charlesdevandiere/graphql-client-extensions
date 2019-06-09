@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using GraphQL.Client.Extensions.UnitTests.Models;
+using System.Linq;
 
 namespace GraphQL.Client.Extensions.UnitTests
 {
@@ -130,10 +131,37 @@ namespace GraphQL.Client.Extensions.UnitTests
                     truck => truck.Load,
                     sq => sq
                         .Select(load => load.Weight));
-            
+
             string result = query.Build();
-            
-            Assert.IsNotNull(result);
+
+            Assert.AreEqual("truck(id:\"yk8h4vn0\",km:2100){name weelsNumber load{weight}}", result);
+        }
+
+        [TestMethod]
+        public void TestSubSelectWithList()
+        {
+            var query = new Query<ObjectWithList>("object")
+                .SubSelect<SubObject>(c => c.IEnumerable, sq => sq)
+                .SubSelect<SubObject>(c => c.List, sq => sq)
+                .SubSelect<SubObject>(c => c.IQueryable, sq => sq)
+                .SubSelect<SubObject>(c => c.Array, sq => sq);
+
+            Assert.AreEqual(typeof(Query<SubObject>), query.SelectList[0].GetType());
+            Assert.AreEqual(typeof(Query<SubObject>), query.SelectList[1].GetType());
+            Assert.AreEqual(typeof(Query<SubObject>), query.SelectList[2].GetType());
+            Assert.AreEqual(typeof(Query<SubObject>), query.SelectList[3].GetType());
+        }
+
+        class ObjectWithList
+        {
+            public IEnumerable<SubObject> IEnumerable { get; set; }
+            public List<SubObject> List { get; set; }
+            public IQueryable<SubObject> IQueryable { get; set; }
+            public SubObject[] Array { get; set; }
+        }
+        class SubObject
+        {
+            public byte Id { get; set; }
         }
     }
 }

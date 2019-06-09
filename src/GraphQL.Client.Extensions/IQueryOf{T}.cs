@@ -68,6 +68,17 @@ namespace GraphQL.Client.Extensions
             where TSubSource : class;
 
         /// <summary>
+        /// Generates a sub select query from child object property
+        /// </summary>
+        /// <typeparam name="TSubSource">Sub query source type</typeparam>
+        /// <param name="selector">Child object property selector</param>
+        /// <param name="buildSubQuery">Build sub query</param>
+        IQuery<TSource> SubSelect<TSubSource>(
+            Expression<Func<TSource, IEnumerable<TSubSource>>> selector,
+            Func<IQuery<TSubSource>, IQuery<TSubSource>> buildSubQuery)
+            where TSubSource : class;
+
+        /// <summary>
         /// Generates a sub select query
         /// </summary>
         /// <typeparam name="TSubSource">Sub query source type</typeparam>
