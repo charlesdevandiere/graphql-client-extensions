@@ -19,17 +19,7 @@ namespace GraphQL.Client.Extensions
         /// <summary>
         /// The query string builder.
         /// </summary>
-        public StringBuilder QueryString { get; }
-
-        private const int IndentSize = 4;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="QueryStringBuilder" /> class.
-        /// </summary>
-        public QueryStringBuilder()
-        {
-            QueryString = new StringBuilder();
-        }
+        public StringBuilder QueryString { get; } = new StringBuilder();
 
         /// <summary>
         /// Clear the QueryStringBuilder and all that entails
@@ -48,7 +38,7 @@ namespace GraphQL.Client.Extensions
         /// <param name="value"></param>
         /// <returns>string</returns>
         /// <exception cref="InvalidDataException">Invalid Object Type in Param List</exception>
-        public string BuildQueryParam(object value)
+        internal protected string BuildQueryParam(object value)
         {
             // Nicely use the pattern match
 
@@ -107,7 +97,7 @@ namespace GraphQL.Client.Extensions
 
                     dictStr.Append("{");
                     bool hasType = false;
-                    foreach (var dictObj in (Dictionary<string, object>) dictValue)
+                    foreach (var dictObj in (Dictionary<string, object>)dictValue)
                     {
                         dictStr.Append(BuildQueryParam(dictObj) + ", ");
                         hasType = true;
@@ -140,7 +130,7 @@ namespace GraphQL.Client.Extensions
         /// resolve nested structures
         /// </summary>
         /// <param name="query">The Query</param>
-        public void AddParams(IQuery query)
+        internal protected void AddParams<TSource>(IQuery<TSource> query) where TSource : class
         {
             // safe-tee check
 
@@ -154,10 +144,10 @@ namespace GraphQL.Client.Extensions
             // BuildQueryParam's will recurse any nested data elements
 
             bool hasParams = false;
-            foreach (var param in query.WhereMap)
+            foreach (var param in query.ArgumentsMap)
             {
                 QueryString.Append($"{param.Key}:");
-                QueryString.Append(BuildQueryParam(param.Value) + ", ");
+                QueryString.Append(BuildQueryParam(param.Value) + ",");
                 hasParams = true;
             }
 
@@ -165,7 +155,6 @@ namespace GraphQL.Client.Extensions
 
             if (hasParams)
             {
-                QueryString.Length--;
                 QueryString.Length--;
             }
         }
@@ -177,49 +166,30 @@ namespace GraphQL.Client.Extensions
         /// parameter lists.
         /// </summary>
         /// <param name="query">The Query</param>
-        /// <param name="indent">Indent characters, default 0</param>
         /// <exception cref="ArgumentException">Invalid Object in Field List</exception>
-        public void AddFields(IQuery query, int indent = 0)
+        internal protected void AddFields<TSource>(IQuery<TSource> query) where TSource : class
         {
-            // Build the param list from the name value pairs. NOTE
-            // This will build array or objects differently based on the
-            // type of the value object
-
-            string strPad = new String(' ', indent);
-
-            foreach (var field in query.SelectList)
+            foreach (object item in query.SelectList)
             {
-                switch (field)
+                switch (item)
                 {
-                    case string _:
-                        QueryString.Append(strPad + $"{field}\n");
+                    case string field:
+                        QueryString.Append($"{field} ");
                         break;
-                    case Query query1:
-                        QueryStringBuilder subQuery = new QueryStringBuilder();
-                        QueryString.Append($"{subQuery.Build(query1, indent)}\n");
+
+                    case IQuery subQuery:
+                        QueryString.Append($"{subQuery.Build()} ");
                         break;
+
                     default:
                         throw new ArgumentException("Invalid Field Type Specified, must be `string` or `Query`");
                 }
             }
-        }
 
-        /// <summary>
-        /// Adds a comment to the Select list part of the Query. Comments
-        /// may be separated by a newline and those will expand to individual
-        /// comment line. Formatting for graphQL '#' comments will happen here
-        /// </summary>
-        /// <param name="comments">Simple Comment</param>
-        /// <param name="indent">Indent characters, default 0</param>
-        public void AddComments(string comments, int indent = 0)
-        {
-            if (String.IsNullOrEmpty(comments))
-                return;
-
-            string pad = new String(' ', indent);
-            string comment = comments.Replace("\n", $"\n{pad}# ");
-
-            QueryString.Append(pad + "# " + comment + "\n");
+            if (query.SelectList.Count > 0)
+            {
+                QueryString.Length--;
+            }
         }
 
         /// <summary>
@@ -229,47 +199,30 @@ namespace GraphQL.Client.Extensions
         /// you can use the output to batch the queries
         /// </summary>
         /// <param name="query">The Query</param>
-        /// <param name="indent">Indent characters, default = 0</param>
         /// <returns>GraphQL query string without outer block</returns>
-        public string Build(IQuery query, int indent = 0)
+        public string Build<TSource>(IQuery<TSource> query) where TSource : class
         {
-            string pad = new String(' ', indent);
-            string prevPad = pad;
-
-            // if we have an alias add it before the name, no padding for next field which is the name!
-
             if (!String.IsNullOrWhiteSpace(query.AliasName))
             {
-                QueryString.Append(pad + $"{query.AliasName}:");
-                pad = "";
+                QueryString.Append($"{query.AliasName}:");
             }
 
-            // here we go, start with the name
+            QueryString.Append(query.Name);
 
-            QueryString.Append(pad + query.QueryName);
-
-            // If we have params must add in parens, if
-            // no params in the query then must skip the parens.
-
-            if (query.WhereMap.Count > 0)
+            if (query.ArgumentsMap.Count > 0)
             {
                 QueryString.Append("(");
                 AddParams(query);
                 QueryString.Append(")");
             }
 
-            // now build the Field list, bump padding as we are inside a query (field block)
+            // now build the Field list
 
-            indent += IndentSize;
+            QueryString.Append("{");
 
-            QueryString.Append("{\n");
+            AddFields(query);
 
-            // Stuff any comments in the field (select) section of the query
-
-            AddComments(query.QueryComment, indent);
-            AddFields(query, indent);
-
-            QueryString.Append(prevPad + "}");
+            QueryString.Append("}");
 
             return QueryString.ToString();
         }

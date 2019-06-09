@@ -34,7 +34,7 @@ namespace GraphQL.Client.Extensions.IntegrationTests
             const string select = "zip";
 
             // Arrange
-            IQuery query = new Query().Select(select);
+            var query = new Query<object>("test1").AddField(select);
 
             // Assert
             Assert.AreEqual(select, query.SelectList.First());
@@ -44,8 +44,8 @@ namespace GraphQL.Client.Extensions.IntegrationTests
         public void Query_Unique_ReturnsCorrect()
         {
             // Arrange
-            IQuery query = new Query().Select("zip");
-            IQuery query1 = new Query().Select("pitydodah");
+            var query = new Query<object>("test1").AddField("zip");
+            var query1 = new Query<object>("test1").AddField("pitydodah");
 
             // Assert counts and not the same
             Assert.IsTrue(query.SelectList.Count == 1);
@@ -54,28 +54,23 @@ namespace GraphQL.Client.Extensions.IntegrationTests
         }
 
         [TestMethod]
-        public void Query_ToString_ReturnsCorrect()
+        public void Query_Build_ReturnsCorrect()
         {
             // Arrange
-            IQuery query = new Query().Name("test1").Select("id");
+            var query = new Query<object>("test1").AddField("id");
 
             // Assert
-            Assert.AreEqual("test1{id}", RemoveWhitespace(query.ToString()));
+            Assert.AreEqual("test1{id}", RemoveWhitespace(query.Build()));
         }
 
         [TestMethod]
-        public void ComplexQuery_ToString_Check()
+        public void ComplexQuery_Build_Check()
         {
             // Arrange
-            IQuery query = new Query();
-            IQuery subSelect = new Query();
-
+            
             // set up a couple of ENUMS
             EnumHelper gqlEnumEnabled = new EnumHelper().Enum("ENABLED");
             EnumHelper gqlEnumDisabled = new EnumHelper("DISABLED");
-
-            // set up a subselection list
-            List<object> subSelList = new List<object>(new object[] { "subName", "subMake", "subModel" });
 
             // set up a subselection parameter (where)
             // has simple string, int, and a couple of ENUMs
@@ -87,16 +82,6 @@ namespace GraphQL.Client.Extensions.IntegrationTests
                 {"_debug", gqlEnumDisabled},
                 {"SuperQuerySpeed", gqlEnumEnabled}
             };
-
-            // Create a Sub Select Query
-            subSelect
-                .Select(subSelList)
-                .Name("subDealer")
-                .Where(mySubDict)
-                .Comment("SubSelect Below!");
-
-            // Add that subselect to the main select
-            List<object> selList = new List<object>(new object[] { "id", subSelect, "name", "make", "model" });
 
             // List of int's (IDs)
             List<int> trimList = new List<int>(new[] { 143783, 243784, 343145 });
@@ -135,26 +120,28 @@ namespace GraphQL.Client.Extensions.IntegrationTests
                 {"_debug", gqlEnumEnabled},
             };
 
-            // Generate the query with an alias and multi-line comment
-            query
-                .Select(selList)
-                .Name("Dealer")
+            var query = new Query<object>("Dealer")
                 .Alias("myDealerAlias")
-                .Where(myDict)
-                .Comment("My First GQL Query with getit\na second line of comments\nand yet another line of comments");
+                .AddField("id")
+                .AddField<object>("subDealer", q => q
+                    .AddField("subName")
+                    .AddField("subMake")
+                    .AddField("subModel")
+                    .AddArguments(mySubDict)
+                    )
+                .AddField("name")
+                .AddField("make")
+                .AddField("model")
+                .AddArguments(myDict);
 
             // Get and pack results
-            string packedResults = RemoveWhitespace(query.ToString());
+            string packedResults = RemoveWhitespace(query.Build());
             string packedCheck = RemoveWhitespace(@"
                     myDealerAlias: Dealer(make: ""aston martin"", state: ""ca"", limit: 2, trims:[143783, 243784, 343145], models:[""DB7"", ""DB9"", ""Vantage""],
                     price:{ from: 123, to: 454, recurse:[""aa"", ""bb"", ""cc""], map: { from: 444.45, to: 555.45} },
                     _debug: ENABLED){
-                    # My First GQL Query with getit
-                    # a second line of comments
-                    # and yet another line of comments
                     id
                     subDealer(subMake: ""aston martin"", subState: ""ca"", subLimit: 1, _debug: DISABLED, SuperQuerySpeed: ENABLED){
-                        # SubSelect Below!
                         subName
                         subMake
                         subModel
