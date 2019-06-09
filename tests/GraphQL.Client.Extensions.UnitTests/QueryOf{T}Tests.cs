@@ -118,5 +118,22 @@ namespace GraphQL.Client.Extensions.UnitTests
             };
             CollectionAssert.AreEqual(expectedSubSelectList, (query.SelectList[2] as IQuery<Load>).SelectList);
         }
+
+        [TestMethod]
+        public void TestQueryBuild()
+        {
+            var query = new Query<Truck>("truck")
+                .SetArguments(new { id = "yk8h4vn0", km = 2100 })
+                .Select(truck => truck.Name)
+                .Select(truck => truck.WeelsNumber)
+                .SubSelect(
+                    truck => truck.Load,
+                    sq => sq
+                        .Select(load => load.Weight));
+            
+            string result = query.Build();
+            
+            Assert.IsNotNull(result);
+        }
     }
 }

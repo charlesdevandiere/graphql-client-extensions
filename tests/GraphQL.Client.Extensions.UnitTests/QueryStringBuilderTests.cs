@@ -210,7 +210,7 @@ namespace GraphQL.Client.Extensions.UnitTests
                 .Select("name")
                 .SetArguments(nestedListMap);
 
-            IQueryStringBuilder queryString = new QueryStringBuilder();
+            QueryStringBuilder queryString = new QueryStringBuilder();
 
             // Act
             queryString.AddParams(query);
@@ -249,7 +249,7 @@ namespace GraphQL.Client.Extensions.UnitTests
                 .Select("name")
                 .SetArguments(nestedListMap);
 
-            IQueryStringBuilder queryString = query.Builder;
+            var queryString = new QueryStringBuilder();
 
             queryString.AddParams(query);
 

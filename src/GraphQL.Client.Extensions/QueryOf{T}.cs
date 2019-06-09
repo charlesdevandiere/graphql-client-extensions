@@ -39,11 +39,11 @@ namespace GraphQL.Client.Extensions
         /// Gets the alias name.
         /// </summary>
         public string AliasName { get; private set; }
-
+        
         /// <summary>
         /// Gets the query string builder.
         /// </summary>
-        internal protected IQueryStringBuilder Builder { get; } = new QueryStringBuilder();
+        private IQueryStringBuilder QueryStringBuilder { get; set; } = new QueryStringBuilder();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Query{TSource}" /> class.
@@ -56,9 +56,28 @@ namespace GraphQL.Client.Extensions
         /// <summary>
         /// Initializes a new instance of the <see cref="Query{TSource}" /> class.
         /// </summary>
+        public Query(string name, IQueryStringBuilder queryStringBuilder)
+        {
+            this.Name = name;
+            this.QueryStringBuilder = queryStringBuilder;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Query{TSource}" /> class.
+        /// </summary>
         public Query(string name, QueryOptions options)
         {
             this.Name = name;
+            this.options = options;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Query{TSource}" /> class.
+        /// </summary>
+        public Query(string name, IQueryStringBuilder queryStringBuilder, QueryOptions options)
+        {
+            this.Name = name;
+            this.QueryStringBuilder = queryStringBuilder;
             this.options = options;
         }
 
@@ -232,9 +251,9 @@ namespace GraphQL.Client.Extensions
                 throw new ArgumentException("Must have a one or more 'Select' fields in the Query");
             }
 
-            this.Builder.Clear();
+            this.QueryStringBuilder.Clear();
 
-            return this.Builder.Build(this);
+            return this.QueryStringBuilder.Build(this);
         }
 
         private static PropertyInfo GetPropertyInfo<TProperty>(Expression<Func<TSource, TProperty>> lambda)
