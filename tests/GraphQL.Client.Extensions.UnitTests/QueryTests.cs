@@ -25,7 +25,7 @@ namespace GraphQL.Client.Extensions.UnitTests
             // Act
             foreach( string field in selectList)
             {
-                query.Select(field);
+                query.AddField(field);
             }
 
             // Assert
@@ -53,7 +53,7 @@ namespace GraphQL.Client.Extensions.UnitTests
             const string select = "id";
 
             // Act
-            query.Select(select);
+            query.AddField(select);
 
             // Assert
             Assert.AreEqual(select, query.SelectList.First());
@@ -66,7 +66,7 @@ namespace GraphQL.Client.Extensions.UnitTests
             var query = new Query<object>("something");
 
             // Act
-            query.Select("some").Select("thing").Select("else");
+            query.AddField("some").AddField("thing").AddField("else");
 
             // Assert
             List<string> shouldEqual = new List<string>()
@@ -93,7 +93,7 @@ namespace GraphQL.Client.Extensions.UnitTests
             // Act
             foreach (string field in selects)
             {
-                query.Select(field);
+                query.AddField(field);
             }
 
             // Assert
@@ -124,15 +124,15 @@ namespace GraphQL.Client.Extensions.UnitTests
             };
 
             // Act
-            query.Select(select);
+            query.AddField(select);
             foreach (string field in selectList)
             {
-                query.Select(field);
+                query.AddField(field);
             }
-            query.Select("some").Select("thing").Select("else");
+            query.AddField("some").AddField("thing").AddField("else");
             foreach (string field in selectStrings)
             {
-                query.Select(field);
+                query.AddField(field);
             }
 
             // Assert
@@ -157,7 +157,7 @@ namespace GraphQL.Client.Extensions.UnitTests
             var query = new Query<object>("something");
 
             // Act
-            query.SetArgument("id", 1);
+            query.AddArgument("id", 1);
 
             // Assert
             Assert.AreEqual(1, query.ArgumentsMap["id"]);
@@ -170,7 +170,7 @@ namespace GraphQL.Client.Extensions.UnitTests
             var query = new Query<object>("something");
 
             // Act
-            query.SetArgument("name", "danny");
+            query.AddArgument("name", "danny");
 
             // Assert
             Assert.AreEqual("danny", query.ArgumentsMap["name"]);
@@ -189,7 +189,7 @@ namespace GraphQL.Client.Extensions.UnitTests
             };
 
             // Act
-            query.SetArgument("price", dict);
+            query.AddArgument("price", dict);
 
             // Assert
             Dictionary<string, int> queryWhere = (Dictionary<string, int>) query.ArgumentsMap["price"];
@@ -212,9 +212,9 @@ namespace GraphQL.Client.Extensions.UnitTests
 
             // Act
             query
-                .SetArgument("id", 123)
-                .SetArgument("name", "danny")
-                .SetArgument("price", dict);
+                .AddArgument("id", 123)
+                .AddArgument("name", "danny")
+                .AddArgument("price", dict);
 
             // Assert
             Dictionary<string, object> shouldPass = new Dictionary<string, object>()
@@ -231,7 +231,7 @@ namespace GraphQL.Client.Extensions.UnitTests
         {
             // Arrange
             var query = new Query<object>(null)
-                .Select("something");
+                .AddField("something");
 
             // Assert
             Assert.ThrowsException<ArgumentException>(() => query.Build());

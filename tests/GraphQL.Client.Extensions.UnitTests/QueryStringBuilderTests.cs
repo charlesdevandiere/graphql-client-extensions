@@ -207,8 +207,8 @@ namespace GraphQL.Client.Extensions.UnitTests
             };
 
             query
-                .Select("name")
-                .SetArguments(nestedListMap);
+                .AddField("name")
+                .AddArguments(nestedListMap);
 
             QueryStringBuilder queryString = new QueryStringBuilder();
 
@@ -246,8 +246,8 @@ namespace GraphQL.Client.Extensions.UnitTests
             };
 
             query
-                .Select("name")
-                .SetArguments(nestedListMap);
+                .AddField("name")
+                .AddArguments(nestedListMap);
 
             var queryString = new QueryStringBuilder();
 
@@ -279,14 +279,14 @@ namespace GraphQL.Client.Extensions.UnitTests
             };
 
             var query = new Query<object>("test1")
-                .Select("more")
-                .Select("things")
-                .Select("in_a_select")
-                .SubSelect<object>("subSelect", q => q
-                    .Select("subName")
-                    .Select("subMake")
-                    .Select("subModel")
-                    .SetArguments(mySubDict));
+                .AddField("more")
+                .AddField("things")
+                .AddField("in_a_select")
+                .AddField<object>("subSelect", q => q
+                    .AddField("subName")
+                    .AddField("subMake")
+                    .AddField("subModel")
+                    .AddArguments(mySubDict));
 
             // Act
             var builder = new QueryStringBuilder();
@@ -315,14 +315,14 @@ namespace GraphQL.Client.Extensions.UnitTests
 
             var query = new Query<object>("test1")
                 .Alias("test1Alias")
-                .Select("more")
-                .Select("things")
-                .Select("in_a_select")
-                .SubSelect<object>("subSelect", q => q
-                    .Select("subName")
-                    .Select("subMake")
-                    .Select("subModel")
-                    .SetArguments(mySubDict));
+                .AddField("more")
+                .AddField("things")
+                .AddField("in_a_select")
+                .AddField<object>("subSelect", q => q
+                    .AddField("subName")
+                    .AddField("subMake")
+                    .AddField("subModel")
+                    .AddArguments(mySubDict));
 
             // Act
             string buildStr = RemoveWhitespace(query.Build());

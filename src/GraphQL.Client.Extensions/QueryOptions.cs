@@ -10,8 +10,12 @@ namespace GraphQL.Client.Extensions
         /// <summary>
         /// Gets or sets the formater
         /// </summary>
-        /// <value></value>
         public Func<string, string> Formater { get; set; }
+
+        /// <summary>
+        /// Gets or sets the query string builder factory
+        /// </summary>
+        public Func<IQueryStringBuilder> QueryStringBuilderFactory { get; set; }
     }
 
     /// <summary>

@@ -16,36 +16,11 @@ dotnet add package GraphQL.Client.Extensions
 
 ### Create a query
 
-There is two main ways to create queries. Using strings or using expressions.
+The query building is based on the object which returns.
 
-#### Using strings
+#### Entities definition
 
-```csharp
-var query = new Query()
-    .Name("humans") // set the name of the query
-    .Select("fisrtName", "lastName") // add a list of fields
-    .Select(new Query() // add a sub query
-        .Name("homePlanet")
-        .Select("name")
-    )
-    .Where("id", "uE78f5hq"); // add filter arguments
-```
-
-This corresponds to :
-
-```txt
-humans (id: "uE78f5hq") {
-  firstName
-  lastName
-  homePlanet {
-    name
-  }
-}
-```
-
-#### Using expressions
-
-Entities definition
+In a first time, you need to create POCOs.
 
 ```csharp
 class Human
@@ -53,6 +28,7 @@ class Human
     public string FirstName { get; set; }
     public string LastName { get; set; }
     public Planet HomePlanet { get; set; }
+    public IEnumerable<Human> Friends { get; set; }
 }
 
 class Planet
@@ -61,18 +37,25 @@ class Planet
 }
 ```
 
-Creation of the query
+#### Creation of the query
+
+After that, you can write a query like this :
 
 ```csharp
 var query = new Query<Human>("humans") // set the name of the query
-    .Select(h => h.FirstName) // add firstName field
-    .Select(h => h.LastName) // add lastName field
-    .SubSelect( // add a sub query
-        h => h.HomePlanet, // set the name of the sub query with the property name
-        subQuery => subQuery
-            .Select(p => p.Name)
-    )
-    .Where("id", "uE78f5hq"); // add filter arguments
+    .AddArguments(new { id = "uE78f5hq" }) // add query arguments
+    .AddField(h => h.FirstName) // add firstName field
+    .AddField(h => h.LastName) // add lastName field
+    .AddField( // add a sub-object field
+        h => h.HomePlanet, // set the name of the field
+        sq => sq /// build the sub-query
+            .AddField(p => p.Name)
+    .AddField<human>( // add a sub-list field
+        h => h.Friends,
+        sq => sq
+            .AddField(h => h.FirstName)
+            .AddField(h => h.LastName)
+    );
 ```
 
 This corresponds to :
@@ -84,10 +67,14 @@ humans (id: "uE78f5hq") {
   HomePlanet {
     Name
   }
+  Friends {
+    FirstName
+    LastName
+  }
 }
 ```
 
-By default, the ```Select``` method use the property name as field name.
+By default, the `AddField()` method use the property name as field name.
 You can use custom formater or JsonPropertyAttribute to change this behavior.
 
 ```csharp
@@ -101,6 +88,9 @@ class Human
 
     [JsonProperty("homePlanet")]
     public Planet HomePlanet { get; set; }
+
+    [JsonProperty("friends")]
+    public IEnumerable<Human> Friends { get; set; }
 }
 ```
 
@@ -125,6 +115,6 @@ Example:
 ```csharp
 using (var client = new GraphQLClient())
 {
-    var human = client.Get<Human>(query);
+    Human human = client.Get<Human>(query);
 }
 ```

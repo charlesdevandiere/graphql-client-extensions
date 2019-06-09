@@ -20,25 +20,37 @@ See complete documentation [here](https://charlesdevandiere.github.io/graphql-cl
 
 ```csharp
 // create the query
-var query = new Query<Human>("humans")
-    .Select(h => h.FirstName)
-    .Select(h => h.LastName)
-    .SubSelect(h => h.HomePlanet, subQuery => subQuery
-        .Select(p => p.Name))
-    .Where("id", "uE78f5hq");
+var query = new Query<Human>("humans") // set the name of the query
+    .AddArguments(new { id = "uE78f5hq" }) // add query arguments
+    .AddField(h => h.FirstName) // add firstName field
+    .AddField(h => h.LastName) // add lastName field
+    .AddField( // add a sub-object field
+        h => h.HomePlanet, // set the name of the field
+        sq => sq /// build the sub-query
+            .AddField(p => p.Name)
+    .AddField<human>( // add a sub-list field
+        h => h.Friends,
+        sq => sq
+            .AddField(h => h.FirstName)
+            .AddField(h => h.LastName)
+    );
 // this corresponds to :
 // humans (id: "uE78f5hq") {
-//   firstName
-//   lastName
-//   homePlanet {
-//     name
+//   FirstName
+//   LastName
+//   HomePlanet {
+//     Name
+//   }
+//   Friends {
+//     FirstName
+//     LastName
 //   }
 // }
 
 using (var client = new GraphQLClient())
 {
     // run the query
-    var human = client.Get<Human>(query);
+    Human human = client.Get<Human>(query);
 }
 ```
 

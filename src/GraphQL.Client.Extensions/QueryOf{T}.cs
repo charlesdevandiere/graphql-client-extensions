@@ -56,37 +56,18 @@ namespace GraphQL.Client.Extensions
         /// <summary>
         /// Initializes a new instance of the <see cref="Query{TSource}" /> class.
         /// </summary>
-        public Query(string name, IQueryStringBuilder queryStringBuilder)
-        {
-            this.Name = name;
-            this.QueryStringBuilder = queryStringBuilder;
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Query{TSource}" /> class.
-        /// </summary>
         public Query(string name, QueryOptions options)
         {
             this.Name = name;
             this.options = options;
+            if (options?.QueryStringBuilderFactory != null)
+            {
+                this.QueryStringBuilder = options.QueryStringBuilderFactory();
+            }
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Query{TSource}" /> class.
-        /// </summary>
-        public Query(string name, IQueryStringBuilder queryStringBuilder, QueryOptions options)
-        {
-            this.Name = name;
-            this.QueryStringBuilder = queryStringBuilder;
-            this.options = options;
-        }
-
-        /// <summary>
-        /// Sets the Query Alias name. This is used in graphQL to allow
-        /// multiple queries with the same endpoint (name) to be assembled
-        /// into a batch like query. This will prefix the Name as specified.
-        /// Note that this can be applied to any sub-select as well. GraphQL will
-        /// rename the query with the alias name in the response.
+        /// Sets the query alias name.
         /// </summary>
         /// <param name="alias">The alias name</param>
         /// <returns>IQuery{TSource}</returns>
@@ -98,12 +79,12 @@ namespace GraphQL.Client.Extensions
         }
 
         /// <summary>
-        /// Add a field to the select list of the query.
+        /// Adds a field to the query.
         /// </summary>
-        /// <typeparam name="TProperty">Field property type</typeparam>
+        /// <typeparam name="TProperty">Property type</typeparam>
         /// <param name="selector">Field selector</param>
         /// <returns>IQuery{TSource}</returns>
-        public IQuery<TSource> Select<TProperty>(Expression<Func<TSource, TProperty>> selector)
+        public IQuery<TSource> AddField<TProperty>(Expression<Func<TSource, TProperty>> selector)
         {
             if (selector == null)
             {
@@ -119,11 +100,11 @@ namespace GraphQL.Client.Extensions
         }
 
         /// <summary>
-        /// Add a field to the select list of the query.
+        /// Adds a field to the query.
         /// </summary>
         /// <param name="field">Field name</param>
         /// <returns>IQuery{TSource}</returns>
-        public IQuery<TSource> Select(string field)
+        public IQuery<TSource> AddField(string field)
         {
             this.SelectList.Add(field);
 
@@ -131,79 +112,82 @@ namespace GraphQL.Client.Extensions
         }
 
         /// <summary>
-        /// Generates a sub select query from child object property
+        /// Adds a sub-object field to the query.
         /// </summary>
-        /// <typeparam name="TSubSource">Sub query source type</typeparam>
-        /// <param name="selector">Child object property selector</param>
-        /// <param name="buildSubQuery">Build sub query</param>
-        public IQuery<TSource> SubSelect<TSubSource>(
+        /// <typeparam name="TSubSource">Sub-object type</typeparam>
+        /// <param name="selector">Field selector</param>
+        /// <param name="build">Sub-object query building function</param>
+        /// <returns>IQuery{TSource}</returns>
+        public IQuery<TSource> AddField<TSubSource>(
             Expression<Func<TSource, TSubSource>> selector,
-            Func<IQuery<TSubSource>, IQuery<TSubSource>> buildSubQuery)
+            Func<IQuery<TSubSource>, IQuery<TSubSource>> build)
             where TSubSource : class
         {
             if (selector == null)
             {
                 throw new ArgumentNullException(nameof(selector));
             }
-            if (buildSubQuery == null)
+            if (build == null)
             {
-                throw new ArgumentNullException(nameof(buildSubQuery));
+                throw new ArgumentNullException(nameof(build));
             }
 
             PropertyInfo property = GetPropertyInfo(selector);
             string name = GetPropertyName(property);
 
-            return SubSelect(name, buildSubQuery);
+            return AddField(name, build);
         }
 
         /// <summary>
-        /// Generates a sub select query from child object property
+        /// Adds a sub-list field to the query.
         /// </summary>
-        /// <typeparam name="TSubSource">Sub query source type</typeparam>
-        /// <param name="selector">Child object property selector</param>
-        /// <param name="buildSubQuery">Build sub query</param>
-        public IQuery<TSource> SubSelect<TSubSource>(
+        /// <typeparam name="TSubSource">Sub-list object type</typeparam>
+        /// <param name="selector">Field selector</param>
+        /// <param name="build">Sub-object query building function</param>
+        /// <returns>IQuery{TSource}</returns>
+        public IQuery<TSource> AddField<TSubSource>(
             Expression<Func<TSource, IEnumerable<TSubSource>>> selector,
-            Func<IQuery<TSubSource>, IQuery<TSubSource>> buildSubQuery)
+            Func<IQuery<TSubSource>, IQuery<TSubSource>> build)
             where TSubSource : class
         {
             if (selector == null)
             {
                 throw new ArgumentNullException(nameof(selector));
             }
-            if (buildSubQuery == null)
+            if (build == null)
             {
-                throw new ArgumentNullException(nameof(buildSubQuery));
+                throw new ArgumentNullException(nameof(build));
             }
 
             PropertyInfo property = GetPropertyInfo(selector);
             string name = GetPropertyName(property);
 
-            return SubSelect(name, buildSubQuery);
+            return AddField(name, build);
         }
 
         /// <summary>
-        /// Generates a sub select query
+        /// Adds a sub-object field to the query.
         /// </summary>
-        /// <typeparam name="TSubSource">Sub query source type</typeparam>
+        /// <typeparam name="TSubSource">Sub-object type</typeparam>
         /// <param name="field">Field name</param>
-        /// <param name="buildSubQuery">Build sub query</param>
-        public IQuery<TSource> SubSelect<TSubSource>(
+        /// <param name="build">Sub-object query building function</param>
+        /// <returns>IQuery{TSource}</returns>
+        public IQuery<TSource> AddField<TSubSource>(
             string field,
-            Func<IQuery<TSubSource>, IQuery<TSubSource>> buildSubQuery)
+            Func<IQuery<TSubSource>, IQuery<TSubSource>> build)
             where TSubSource : class
         {
             if (string.IsNullOrWhiteSpace(field))
             {
                 throw new ArgumentNullException(nameof(field));
             }
-            if (buildSubQuery == null)
+            if (build == null)
             {
-                throw new ArgumentNullException(nameof(buildSubQuery));
+                throw new ArgumentNullException(nameof(build));
             }
 
             var query = new Query<TSubSource>(field, this.options);
-            IQuery<TSubSource> subQuery = buildSubQuery.Invoke(query);
+            IQuery<TSubSource> subQuery = build.Invoke(query);
 
             this.SelectList.Add(subQuery);
 
@@ -211,45 +195,40 @@ namespace GraphQL.Client.Extensions
         }
 
         /// <summary>
-        /// Sets up the Parameters part of the GraphQL query. This
-        /// accepts a key and a where part that will go into the
-        /// list for later construction into the query. The where part
-        /// can be a simple primitive or complex object that will be
-        /// evaluated.
+        /// Adds a new argument to the query.
         /// </summary>
-        /// <param name="key">The Parameter Name</param>
-        /// <param name="where">The value of the parameter, primitive or object</param>
-        /// <returns></returns>
-        public IQuery<TSource> SetArgument(string key, object where)
+        /// <param name="key">Argument name</param>
+        /// <param name="value">Value</param>
+        /// <returns>IQuery{TSource}</returns>
+        public IQuery<TSource> AddArgument(string key, object value)
         {
-            this.ArgumentsMap.Add(key, where);
+            this.ArgumentsMap.Add(key, value);
 
             return this;
         }
 
         /// <summary>
-        /// Add a dict of key value pairs &lt;string, object&gt; to the existing where part
+        /// Adds arguments to the query.
         /// </summary>
-        /// <param name="dict">An existing Dictionary that takes &lt;string, object&gt;</param>
+        /// <param name="arguments">Dictionary argument</param>
         /// <returns>IQuery{TSource}</returns>
-        /// <exception cref="ArgumentException">Dupe Key</exception>
-        /// <exception cref="ArgumentNullException">Null Argument</exception>
-        public IQuery<TSource> SetArguments(Dictionary<string, object> dict)
+        public IQuery<TSource> AddArguments(Dictionary<string, object> arguments)
         {
-            foreach (KeyValuePair<string, object> field in dict)
+            foreach (KeyValuePair<string, object> argument in arguments)
             {
-                this.ArgumentsMap.Add(field.Key, field.Value);
+                this.ArgumentsMap.Add(argument.Key, argument.Value);
             }
 
             return this;
         }
 
         /// <sumary>
-        /// Sets arguments from object.
+        /// Adds arguments to the query.
         /// </sumary>
-        /// <typeparam name="TArguments">Arguments type</typeparam>
+        /// <typeparam name="TArguments">Arguments object type</typeparam>
         /// <param name="arguments">Arguments object</param>
-        public IQuery<TSource> SetArguments<TArguments>(TArguments arguments) where TArguments : class
+        /// <returns>IQuery{TSource}</returns>
+        public IQuery<TSource> AddArguments<TArguments>(TArguments arguments) where TArguments : class
         {
             PropertyInfo[] properties = typeof(TArguments).GetProperties();
             foreach (PropertyInfo property in properties)

@@ -34,7 +34,7 @@ namespace GraphQL.Client.Extensions.IntegrationTests
             const string select = "zip";
 
             // Arrange
-            var query = new Query<object>("test1").Select(select);
+            var query = new Query<object>("test1").AddField(select);
 
             // Assert
             Assert.AreEqual(select, query.SelectList.First());
@@ -44,8 +44,8 @@ namespace GraphQL.Client.Extensions.IntegrationTests
         public void Query_Unique_ReturnsCorrect()
         {
             // Arrange
-            var query = new Query<object>("test1").Select("zip");
-            var query1 = new Query<object>("test1").Select("pitydodah");
+            var query = new Query<object>("test1").AddField("zip");
+            var query1 = new Query<object>("test1").AddField("pitydodah");
 
             // Assert counts and not the same
             Assert.IsTrue(query.SelectList.Count == 1);
@@ -57,7 +57,7 @@ namespace GraphQL.Client.Extensions.IntegrationTests
         public void Query_Build_ReturnsCorrect()
         {
             // Arrange
-            var query = new Query<object>("test1").Select("id");
+            var query = new Query<object>("test1").AddField("id");
 
             // Assert
             Assert.AreEqual("test1{id}", RemoveWhitespace(query.Build()));
@@ -122,17 +122,17 @@ namespace GraphQL.Client.Extensions.IntegrationTests
 
             var query = new Query<object>("Dealer")
                 .Alias("myDealerAlias")
-                .Select("id")
-                .SubSelect<object>("subDealer", q => q
-                    .Select("subName")
-                    .Select("subMake")
-                    .Select("subModel")
-                    .SetArguments(mySubDict)
+                .AddField("id")
+                .AddField<object>("subDealer", q => q
+                    .AddField("subName")
+                    .AddField("subMake")
+                    .AddField("subModel")
+                    .AddArguments(mySubDict)
                     )
-                .Select("name")
-                .Select("make")
-                .Select("model")
-                .SetArguments(myDict);
+                .AddField("name")
+                .AddField("make")
+                .AddField("model")
+                .AddArguments(myDict);
 
             // Get and pack results
             string packedResults = RemoveWhitespace(query.Build());

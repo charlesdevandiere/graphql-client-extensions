@@ -25,95 +25,89 @@ namespace GraphQL.Client.Extensions
         string Name { get; }
 
         /// <summary>
-        /// Gets the alias name.
+        /// Gets the query alias name.
         /// </summary>
         string AliasName { get; }
 
         /// <summary>
-        /// Sets the Query Alias name. This is used in graphQL to allow
-        /// multiple queries with the same endpoint (name) to be assembled
-        /// into a batch like query. This will prefix the Name in the query.
-        /// It will also be used for the Response name processing.
-        /// Note that this can be applied to any sub-select as well. GraphQL will
-        /// rename the query with the alias name in the response.
+        /// Sets the query alias name.
         /// </summary>
         /// <param name="alias">The alias name</param>
-        /// <returns>Query</returns>
+        /// <returns>IQuery{TSource}</returns>
         IQuery<TSource> Alias(string alias);
 
         /// <summary>
-        /// Add a field to the select list of the query.
+        /// Adds a field to the query.
         /// </summary>
-        /// <typeparam name="TProperty">Field property type</typeparam>
+        /// <typeparam name="TProperty">Property type</typeparam>
         /// <param name="selector">Field selector</param>
         /// <returns>IQuery{TSource}</returns>
-        IQuery<TSource> Select<TProperty>(Expression<Func<TSource, TProperty>> selector);
+        IQuery<TSource> AddField<TProperty>(Expression<Func<TSource, TProperty>> selector);
 
         /// <summary>
-        /// Add a field to the select list of the query.
+        /// Adds a field to the query.
         /// </summary>
         /// <param name="field">Field name</param>
         /// <returns>IQuery{TSource}</returns>
-        IQuery<TSource> Select(string field);
+        IQuery<TSource> AddField(string field);
 
         /// <summary>
-        /// Generates a sub select query from child object property
+        /// Adds a sub-object field to the query.
         /// </summary>
-        /// <typeparam name="TSubSource">Sub query source type</typeparam>
-        /// <param name="selector">Child object property selector</param>
-        /// <param name="buildSubQuery">Build sub query</param>
-        IQuery<TSource> SubSelect<TSubSource>(
+        /// <typeparam name="TSubSource">Sub-object type</typeparam>
+        /// <param name="selector">Field selector</param>
+        /// <param name="build">Sub-object query building function</param>
+        /// <returns>IQuery{TSource}</returns>
+        IQuery<TSource> AddField<TSubSource>(
             Expression<Func<TSource, TSubSource>> selector,
-            Func<IQuery<TSubSource>, IQuery<TSubSource>> buildSubQuery)
+            Func<IQuery<TSubSource>, IQuery<TSubSource>> build)
             where TSubSource : class;
 
         /// <summary>
-        /// Generates a sub select query from child object property
+        /// Adds a sub-list field to the query.
         /// </summary>
-        /// <typeparam name="TSubSource">Sub query source type</typeparam>
-        /// <param name="selector">Child object property selector</param>
-        /// <param name="buildSubQuery">Build sub query</param>
-        IQuery<TSource> SubSelect<TSubSource>(
+        /// <typeparam name="TSubSource">Sub-list object type</typeparam>
+        /// <param name="selector">Field selector</param>
+        /// <param name="build">Sub-object query building function</param>
+        /// <returns>IQuery{TSource}</returns>
+        IQuery<TSource> AddField<TSubSource>(
             Expression<Func<TSource, IEnumerable<TSubSource>>> selector,
-            Func<IQuery<TSubSource>, IQuery<TSubSource>> buildSubQuery)
+            Func<IQuery<TSubSource>, IQuery<TSubSource>> build)
             where TSubSource : class;
 
         /// <summary>
-        /// Generates a sub select query
+        /// Adds a sub-object field to the query.
         /// </summary>
-        /// <typeparam name="TSubSource">Sub query source type</typeparam>
+        /// <typeparam name="TSubSource">Sub-object type</typeparam>
         /// <param name="field">Field name</param>
-        /// <param name="buildSubQuery">Build sub query</param>
-        IQuery<TSource> SubSelect<TSubSource>(
+        /// <param name="build">Sub-object query building function</param>
+        /// <returns>IQuery{TSource}</returns>
+        IQuery<TSource> AddField<TSubSource>(
             string field,
-            Func<IQuery<TSubSource>, IQuery<TSubSource>> buildSubQuery)
+            Func<IQuery<TSubSource>, IQuery<TSubSource>> build)
             where TSubSource : class;
 
         /// <summary>
-        /// Sets up the Parameters part of the GraphQL query. This
-        /// accepts a key and a where part that will go into the
-        /// list for later construction into the query. The where part
-        /// can be a simple primitive or complex object that will be
-        /// evaluated.
+        /// Adds a new argument to the query.
         /// </summary>
-        /// <param name="key">The Parameter Name</param>
-        /// <param name="where">The value of the parameter, primitive or object</param>
-        /// <returns></returns>
-        IQuery<TSource> SetArgument(string key, object where);
+        /// <param name="key">Argument name</param>
+        /// <param name="value">Value</param>
+        /// <returns>IQuery{TSource}</returns>
+        IQuery<TSource> AddArgument(string key, object value);
 
         /// <summary>
-        /// Add a dict of key value pairs &lt;string, object&gt; to the existing where part
+        /// Adds arguments to the query.
         /// </summary>
-        /// <param name="dict">An existing Dictionary that takes &lt;string, object&gt;</param>
-        /// <returns>Query</returns>
-        /// <throws>DuplicateKeyException and others</throws>
-        IQuery<TSource> SetArguments(Dictionary<string, object> dict);
+        /// <param name="arguments">Dictionary argument</param>
+        /// <returns>IQuery{TSource}</returns>
+        IQuery<TSource> AddArguments(Dictionary<string, object> arguments);
 
         /// <sumary>
-        /// Sets arguments from object.
+        /// Adds arguments to the query.
         /// </sumary>
-        /// <typeparam name="TArguments">Arguments type</typeparam>
+        /// <typeparam name="TArguments">Arguments object type</typeparam>
         /// <param name="arguments">Arguments object</param>
-        IQuery<TSource> SetArguments<TArguments>(TArguments arguments) where TArguments : class;
+        /// <returns>IQuery{TSource}</returns>
+        IQuery<TSource> AddArguments<TArguments>(TArguments arguments) where TArguments : class;
     }
 }
