@@ -31,8 +31,8 @@ var query = new Query<Human>("humans") // set the name of the query
     .AddField<human>( // add a sub-list field
         h => h.Friends,
         sq => sq
-            .AddField(h => h.FirstName)
-            .AddField(h => h.LastName)
+            .AddField(f => f.FirstName)
+            .AddField(f => f.LastName)
     );
 // this corresponds to :
 // humans (id: "uE78f5hq") {
