@@ -4,12 +4,16 @@
 
 Extensions for [GraphQL.Client](https://github.com/graphql-dotnet/graphql-client) to build graphQL queries from a C# model, inspired by [Getit](https://github.com/Revmaker/Getit)
 
+[![Build Status](https://dev.azure.com/charlesdevandiere/charlesdevandiere/_apis/build/status/charlesdevandiere.graphql-client-extensions?branchName=master)](https://dev.azure.com/charlesdevandiere/charlesdevandiere/_build/latest?definitionId=1&branchName=master)
+
+[![Nuget](https://img.shields.io/nuget/v/GraphQL.Client.Extensions.svg?color=blue&logo=nuget)](https://www.nuget.org/packages/GraphQL.Client.Extensions)
+
 ## Install
 
 Run this command with dotnet CLI:
 
-```batch
-dotnet add package GraphQL.Client.Extensions
+```bat
+> dotnet add package GraphQL.Client.Extensions
 ```
 
 ## Usage
@@ -53,8 +57,8 @@ var query = new Query<Human>("humans") // set the name of the query
     .AddField<human>( // add a sub-list field
         h => h.Friends,
         sq => sq
-            .AddField(h => h.FirstName)
-            .AddField(h => h.LastName)
+            .AddField(f => f.FirstName)
+            .AddField(f => f.LastName)
     );
 ```
 
@@ -96,9 +100,9 @@ class Human
 
 ```csharp
 var query = new Query(options: new QueryOptions
-            {
-                Formater = QueryFormaters.CamelCaseFormater
-            });
+    {
+        Formater = QueryFormaters.CamelCaseFormater
+    });
 ```
 
 Formater's type is ```Func<string, string>```
