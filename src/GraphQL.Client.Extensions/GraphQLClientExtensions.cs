@@ -135,7 +135,7 @@ namespace GraphQL.Client.Extensions
 
         private static GraphQLRequest CreateGraphQLResquest<T>(IQuery<T> query) where T : class
         {
-            return new GraphQLRequest { Query = "{" + query.ToString() + "}" };
+            return new GraphQLRequest { Query = "{" + query.Build() + "}" };
         }
     }
 }
