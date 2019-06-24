@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using GraphQL.Client;
 using GraphQL.Common.Request;
@@ -27,16 +28,17 @@ namespace GraphQL.Client.Extensions
         /// <param name="gqlClient"></param>
         /// <param name="query"></param>
         /// <param name="resultName">Override of the Name/Alias of the query</param>
+        /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>The type of object stuffed with data from the query</returns>
         /// <exception cref="ArgumentException">Dupe Key, missing parts or empty parts of a query</exception>
         /// <exception cref="ArgumentNullException">Invalid Configuration</exception>
-        public static async Task<T> Get<T>(this GraphQLClient gqlClient, IQuery<T> query, string resultName = null) where T : class
+        public static async Task<T> Get<T>(this GraphQLClient gqlClient, IQuery<T> query, string resultName = null, CancellationToken cancellationToken = default) where T : class
         {
             GraphQLRequest gqlQuery = CreateGraphQLResquest(query);
 
             // make the call to the server, this will toss on any non 200 response
 
-            GraphQLResponse gqlResp = await gqlClient.GetAsync(gqlQuery);
+            GraphQLResponse gqlResp = await gqlClient.GetAsync(gqlQuery, cancellationToken);
 
             return ParseResponse<T>(query, ref resultName, gqlQuery, gqlResp);
         }
@@ -53,16 +55,17 @@ namespace GraphQL.Client.Extensions
         /// <param name="gqlClient"></param>
         /// <param name="query"></param>
         /// <param name="resultName">Override of the Name/Alias of the query</param>
+        /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>The type of object stuffed with data from the query</returns>
         /// <exception cref="ArgumentException">Dupe Key, missing parts or empty parts of a query</exception>
         /// <exception cref="ArgumentNullException">Invalid Configuration</exception>
-        public static async Task<T> Post<T>(this GraphQLClient gqlClient, IQuery<T> query, string resultName = null) where T : class
+        public static async Task<T> Post<T>(this GraphQLClient gqlClient, IQuery<T> query, string resultName = null, CancellationToken cancellationToken = default) where T : class
         {
             GraphQLRequest gqlQuery = CreateGraphQLResquest(query);
 
             // make the call to the server, this will toss on any non 200 response
 
-            GraphQLResponse gqlResp = await gqlClient.PostAsync(gqlQuery);
+            GraphQLResponse gqlResp = await gqlClient.PostAsync(gqlQuery, cancellationToken);
             
             return ParseResponse<T>(query, ref resultName, gqlQuery, gqlResp);
         }
