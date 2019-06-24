@@ -124,7 +124,7 @@ namespace GraphQL.Client.Extensions.UnitTests
         public void TestQueryBuild()
         {
             var query = new Query<Truck>("truck")
-                .AddArguments(new { id = "yk8h4vn0", km = 2100 })
+                .AddArguments(new { id = "yk8h4vn0", km = 2100, imported = true })
                 .AddField(truck => truck.Name)
                 .AddField(truck => truck.WeelsNumber)
                 .AddField(
@@ -134,7 +134,7 @@ namespace GraphQL.Client.Extensions.UnitTests
 
             string result = query.Build();
 
-            Assert.AreEqual("truck(id:\"yk8h4vn0\",km:2100){name weelsNumber load{weight}}", result);
+            Assert.AreEqual("truck(id:\"yk8h4vn0\",km:2100,imported:true){name weelsNumber load{weight}}", result);
         }
 
         [TestMethod]
