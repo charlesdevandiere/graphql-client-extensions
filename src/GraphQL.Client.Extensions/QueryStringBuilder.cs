@@ -58,6 +58,9 @@ namespace GraphQL.Client.Extensions
                 case double doubleValue:
                     return doubleValue.ToString(CultureInfo.CurrentCulture);
 
+                case bool booleanValue:
+                    return booleanValue.ToString(CultureInfo.CurrentCulture).ToLower();
+
                 case EnumHelper enumValue:
                     return enumValue.ToString();
 
