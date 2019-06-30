@@ -16,6 +16,13 @@ namespace GraphQL.Client.Extensions.IntegrationTests
     [DeploymentItem("TestData/nearest-dealer-response-data.json")]
     public class GraphQLClientExtensionsTests
     {
+        enum TestEnum
+        {
+            ENABLED,
+            DISABLED,
+            HAYstack
+        }
+
         public GraphQLClientExtensionsTests()
         {
             CultureInfo.CurrentCulture = new CultureInfo("en-us", false);
@@ -68,10 +75,6 @@ namespace GraphQL.Client.Extensions.IntegrationTests
         {
             // Arrange
             
-            // set up a couple of ENUMS
-            EnumHelper gqlEnumEnabled = new EnumHelper().Enum("ENABLED");
-            EnumHelper gqlEnumDisabled = new EnumHelper("DISABLED");
-
             // set up a subselection parameter (where)
             // has simple string, int, and a couple of ENUMs
             Dictionary<string, object> mySubDict = new Dictionary<string, object>
@@ -79,8 +82,8 @@ namespace GraphQL.Client.Extensions.IntegrationTests
                 {"subMake", "aston martin"},
                 {"subState", "ca"},
                 {"subLimit", 1},
-                {"_debug", gqlEnumDisabled},
-                {"SuperQuerySpeed", gqlEnumEnabled}
+                {"_debug", TestEnum.DISABLED},
+                {"SuperQuerySpeed", TestEnum.ENABLED}
             };
 
             // List of int's (IDs)
@@ -117,7 +120,7 @@ namespace GraphQL.Client.Extensions.IntegrationTests
                 {"trims", trimList},
                 {"models", modelList},
                 {"price", fromToPrice},
-                {"_debug", gqlEnumEnabled},
+                {"_debug", TestEnum.ENABLED},
             };
 
             var query = new Query<object>("Dealer")

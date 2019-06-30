@@ -44,8 +44,6 @@ namespace GraphQL.Client.Extensions
 
             switch (value)
             {
-                // String to EnumHelper are all treated as a
-                // primitive value
                 case string strValue:
                     return "\"" + strValue + "\"";
 
@@ -61,11 +59,8 @@ namespace GraphQL.Client.Extensions
                 case bool booleanValue:
                     return booleanValue.ToString(CultureInfo.CurrentCulture).ToLower();
 
-                case EnumHelper enumValue:
+                case Enum enumValue:
                     return enumValue.ToString();
-
-                // All below are non-primitives that will recurse
-                // until the structure resolves into primitives
 
                 case KeyValuePair<string, object> kvValue:
                     StringBuilder keyValueStr = new StringBuilder();
