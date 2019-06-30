@@ -9,7 +9,12 @@ trigger:
   batch: true
   branches:
     include:
-      - master
+    - master
+  paths:
+    exclude:
+    - docs/*
+    - README.md
+      
 
 steps:
 - checkout: self

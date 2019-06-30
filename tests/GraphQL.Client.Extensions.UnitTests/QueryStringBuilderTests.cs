@@ -10,6 +10,13 @@ namespace GraphQL.Client.Extensions.UnitTests
     [TestClass]
     public class QueryStringBuilderTests
     {
+        enum TestEnum
+        {
+            ENABLED,
+            DISABLED,
+            HAYstack
+        }
+
         public QueryStringBuilderTests()
         {
             CultureInfo.CurrentCulture = new CultureInfo("en-us", false);
@@ -66,10 +73,9 @@ namespace GraphQL.Client.Extensions.UnitTests
         {
             // Arrange
             QueryStringBuilder queryString = new QueryStringBuilder();
-            EnumHelper enumDisabled = new EnumHelper("DISABLED");
 
             // Act
-            string enumStr = queryString.BuildQueryParam(enumDisabled);
+            string enumStr = queryString.BuildQueryParam(TestEnum.DISABLED);
 
             // Assert
             Assert.AreEqual("DISABLED", enumStr);
@@ -140,12 +146,9 @@ namespace GraphQL.Client.Extensions.UnitTests
         {
             // Arrange
             QueryStringBuilder queryString = new QueryStringBuilder();
-            EnumHelper enumDisabled = new EnumHelper("DISABLED");
-            EnumHelper enumEnabled = new EnumHelper("ENABLED");
-            EnumHelper enumHaystack = new EnumHelper("HAYstack");
 
             // Act
-            List<EnumHelper> enumList = new List<EnumHelper>(new[] { enumEnabled, enumDisabled, enumHaystack });
+            List<TestEnum> enumList = new List<TestEnum>(new[] { TestEnum.ENABLED, TestEnum.DISABLED, TestEnum.HAYstack });
             string enumListStr = queryString.BuildQueryParam(enumList);
 
             // Assert
@@ -158,7 +161,6 @@ namespace GraphQL.Client.Extensions.UnitTests
             // Arrange
             QueryStringBuilder queryString = new QueryStringBuilder();
             List<object> objList = new List<object>(new object[] { "aa", "bb", "cc" });
-            EnumHelper enumHaystack = new EnumHelper("HAYstack");
 
             Dictionary<string, object> fromToMap = new Dictionary<string, object>
             {
@@ -172,7 +174,7 @@ namespace GraphQL.Client.Extensions.UnitTests
                 {"to", 454},
                 {"recurse", objList},
                 {"map", fromToMap},
-                {"name",  enumHaystack}
+                {"name",  TestEnum.HAYstack}
             };
 
             // Act
@@ -189,7 +191,6 @@ namespace GraphQL.Client.Extensions.UnitTests
             Query<Car> query = new Query<Car>("test1");
 
             List<object> objList = new List<object>(new object[] { "aa", "bb", "cc" });
-            EnumHelper enumHaystack = new EnumHelper("HAYstack");
 
             Dictionary<string, object> fromToMap = new Dictionary<string, object>
             {
@@ -203,7 +204,7 @@ namespace GraphQL.Client.Extensions.UnitTests
                 {"to", 454},
                 {"recurse", objList},
                 {"map", fromToMap},
-                {"name",  enumHaystack}
+                {"name",  TestEnum.HAYstack}
             };
 
             query
@@ -228,7 +229,6 @@ namespace GraphQL.Client.Extensions.UnitTests
             var query = new Query<object>("test1");
 
             List<object> objList = new List<object>(new object[] { "aa", "bb", "cc" });
-            EnumHelper enumHaystack = new EnumHelper("HAYstack");
 
             Dictionary<string, object> fromToMap = new Dictionary<string, object>
             {
@@ -242,7 +242,7 @@ namespace GraphQL.Client.Extensions.UnitTests
                 {"to", 454},
                 {"recurse", objList},
                 {"map", fromToMap},
-                {"name",  enumHaystack}
+                {"name",  TestEnum.HAYstack}
             };
 
             query
@@ -264,18 +264,16 @@ namespace GraphQL.Client.Extensions.UnitTests
         public void Select_QueryString_ParseQueryString()
         {
             // Arrange
+            
             var subSelect = new Query<object>("subSelect");
-
-            EnumHelper gqlEnumEnabled = new EnumHelper().Enum("ENABLED");
-            EnumHelper gqlEnumDisabled = new EnumHelper("DISABLED");
 
             Dictionary<string, object> mySubDict = new Dictionary<string, object>
             {
                 {"subMake", "aston martin"},
                 {"subState", "ca"},
                 {"subLimit", 1},
-                {"__debug", gqlEnumDisabled},
-                {"SuperQuerySpeed", gqlEnumEnabled }
+                {"__debug", TestEnum.DISABLED},
+                {"SuperQuerySpeed", TestEnum.ENABLED }
             };
 
             var query = new Query<object>("test1")
@@ -301,16 +299,13 @@ namespace GraphQL.Client.Extensions.UnitTests
         public void Build_AllElements_StringMatch()
         {
             // Arrange
-            EnumHelper gqlEnumEnabled = new EnumHelper().Enum("ENABLED");
-            EnumHelper gqlEnumDisabled = new EnumHelper("DISABLED");
-
             Dictionary<string, object> mySubDict = new Dictionary<string, object>
             {
                 {"subMake", "aston martin"},
                 {"subState", "ca"},
                 {"subLimit", 1},
-                {"__debug", gqlEnumDisabled},
-                {"SuperQuerySpeed", gqlEnumEnabled }
+                {"__debug", TestEnum.DISABLED },
+                {"SuperQuerySpeed", TestEnum.ENABLED }
             };
 
             var query = new Query<object>("test1")
