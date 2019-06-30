@@ -122,3 +122,7 @@ using (var client = new GraphQLClient())
     Human human = client.Get<Human>(query);
 }
 ```
+
+## API documentation
+
+See API documentation [here](GraphQL.Client.Extensions)
