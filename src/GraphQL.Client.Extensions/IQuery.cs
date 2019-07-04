@@ -8,6 +8,16 @@ namespace GraphQL.Client.Extensions
     public interface IQuery
     {
         /// <summary>
+        /// Gets the query name.
+        /// </summary>
+        string Name { get; }
+
+        /// <summary>
+        /// Gets the query alias name.
+        /// </summary>
+        string AliasName { get; }
+
+        /// <summary>
         /// Builds the query.
         /// </summary>
         /// <returns>The GraphQL Query String, without outer enclosing block</returns>

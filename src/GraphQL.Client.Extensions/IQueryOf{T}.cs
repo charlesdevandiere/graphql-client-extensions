@@ -20,16 +20,6 @@ namespace GraphQL.Client.Extensions
         Dictionary<string, object> ArgumentsMap { get; }
 
         /// <summary>
-        /// Gets the query name.
-        /// </summary>
-        string Name { get; }
-
-        /// <summary>
-        /// Gets the query alias name.
-        /// </summary>
-        string AliasName { get; }
-
-        /// <summary>
         /// Sets the query alias name.
         /// </summary>
         /// <param name="alias">The alias name</param>
