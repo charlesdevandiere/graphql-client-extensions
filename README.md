@@ -10,9 +10,11 @@ Extensions for [GraphQL.Client](https://github.com/graphql-dotnet/graphql-client
 
 See complete documentation [here](https://charlesdevandiere.github.io/graphql-client-extensions/)
 
+See complete documentation [here](https://charlesdevandiere.github.io/graphql-client-extensions/)
+
 ## Install
 
-```batch
+```console
 > dotnet add package GraphQL.Client.Extensions
 ```
 
@@ -47,10 +49,10 @@ var query = new Query<Human>("humans") // set the name of the query
 //   }
 // }
 
-using (var client = new GraphQLClient())
+using (var client = new GraphQLClient("<url>"))
 {
     // run the query
-    Human human = client.Get<Human>(query);
+    Human human = await client.Get<Human>(query);
 }
 ```
 

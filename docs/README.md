@@ -12,7 +12,7 @@ Extensions for [GraphQL.Client](https://github.com/graphql-dotnet/graphql-client
 
 Run this command with dotnet CLI:
 
-```bat
+```console
 > dotnet add package GraphQL.Client.Extensions
 ```
 
@@ -64,7 +64,7 @@ var query = new Query<Human>("humans") // set the name of the query
 
 This corresponds to :
 
-```txt
+```GraphQL
 humans (id: "uE78f5hq") {
   FirstName
   LastName
@@ -117,9 +117,9 @@ You can run the query using two GraphQLCLient extension methods:
 Example:
 
 ```csharp
-using (var client = new GraphQLClient())
+using (var client = new GraphQLClient("<url>"))
 {
-    Human human = client.Get<Human>(query);
+    Human human = await client.Get<Human>(query);
 }
 ```
 

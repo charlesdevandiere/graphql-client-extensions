@@ -23,8 +23,7 @@ namespace GraphQL.Client.Extensions
         /// For Raw queries you must set the resultName param OR set the Name() in
         /// the query to match. This handles server connection here!
         /// </summary>
-        /// <typeparam name="T">Data Type, typically a list of the record but not always.
-        /// </typeparam>
+        /// <typeparam name="T">Data Type, typically a list of the record but not always.</typeparam>
         /// <param name="gqlClient"></param>
         /// <param name="query"></param>
         /// <param name="resultName">Override of the Name/Alias of the query</param>
@@ -32,7 +31,8 @@ namespace GraphQL.Client.Extensions
         /// <returns>The type of object stuffed with data from the query</returns>
         /// <exception cref="ArgumentException">Dupe Key, missing parts or empty parts of a query</exception>
         /// <exception cref="ArgumentNullException">Invalid Configuration</exception>
-        public static async Task<T> Get<T>(this GraphQLClient gqlClient, IQuery<T> query, string resultName = null, CancellationToken cancellationToken = default) where T : class
+        public static async Task<T> Get<T>(this GraphQLClient gqlClient, IQuery query, string resultName = null, CancellationToken cancellationToken = default)
+            where T : class
         {
             GraphQLRequest gqlQuery = CreateGraphQLResquest(query);
 
@@ -59,18 +59,20 @@ namespace GraphQL.Client.Extensions
         /// <returns>The type of object stuffed with data from the query</returns>
         /// <exception cref="ArgumentException">Dupe Key, missing parts or empty parts of a query</exception>
         /// <exception cref="ArgumentNullException">Invalid Configuration</exception>
-        public static async Task<T> Post<T>(this GraphQLClient gqlClient, IQuery<T> query, string resultName = null, CancellationToken cancellationToken = default) where T : class
+        public static async Task<T> Post<T>(this GraphQLClient gqlClient, IQuery query, string resultName = null, CancellationToken cancellationToken = default)
+            where T : class
         {
             GraphQLRequest gqlQuery = CreateGraphQLResquest(query);
 
             // make the call to the server, this will toss on any non 200 response
 
             GraphQLResponse gqlResp = await gqlClient.PostAsync(gqlQuery, cancellationToken);
-            
+
             return ParseResponse<T>(query, ref resultName, gqlQuery, gqlResp);
         }
 
-        private static T ParseResponse<T>(IQuery<T> query, ref string resultName, GraphQLRequest gqlQuery, GraphQLResponse gqlResp) where T : class
+        private static T ParseResponse<T>(IQuery query, ref string resultName, GraphQLRequest gqlQuery, GraphQLResponse gqlResp)
+            where T : class
         {
             // check for no results, this is an odd case but should be caught
 
@@ -136,7 +138,7 @@ namespace GraphQL.Client.Extensions
             }
         }
 
-        private static GraphQLRequest CreateGraphQLResquest<T>(IQuery<T> query) where T : class
+        private static GraphQLRequest CreateGraphQLResquest(IQuery query)
         {
             return new GraphQLRequest { Query = "{" + query.Build() + "}" };
         }

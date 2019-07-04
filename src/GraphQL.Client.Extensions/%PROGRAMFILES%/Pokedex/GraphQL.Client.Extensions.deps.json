@@ -1,0 +1,115 @@
+{
+  "runtimeTarget": {
+    "name": ".NETStandard,Version=v2.0/",
+    "signature": "03ed7966c26a8c962ef1d29e29f79d7d16aab953"
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETStandard,Version=v2.0": {},
+    ".NETStandard,Version=v2.0/": {
+      "GraphQL.Client.Extensions/0.0.0": {
+        "dependencies": {
+          "GraphQL.Client": "1.0.3",
+          "NETStandard.Library": "2.0.3"
+        },
+        "runtime": {
+          "GraphQL.Client.Extensions.dll": {}
+        }
+      },
+      "GraphQL.Client/1.0.3": {
+        "dependencies": {
+          "GraphQL.Common": "1.0.3"
+        },
+        "runtime": {
+          "lib/netstandard2.0/GraphQL.Client.dll": {
+            "assemblyVersion": "1.0.3.0",
+            "fileVersion": "1.0.3.0"
+          }
+        }
+      },
+      "GraphQL.Common/1.0.3": {
+        "dependencies": {
+          "Microsoft.CSharp": "4.4.1",
+          "Newtonsoft.Json": "11.0.2"
+        },
+        "runtime": {
+          "lib/netstandard2.0/GraphQL.Common.dll": {
+            "assemblyVersion": "1.0.3.0",
+            "fileVersion": "1.0.3.0"
+          }
+        }
+      },
+      "Microsoft.CSharp/4.4.1": {
+        "runtime": {
+          "lib/netstandard2.0/Microsoft.CSharp.dll": {
+            "assemblyVersion": "4.0.3.0",
+            "fileVersion": "4.6.25921.2"
+          }
+        }
+      },
+      "Microsoft.NETCore.Platforms/1.1.0": {},
+      "NETStandard.Library/2.0.3": {
+        "dependencies": {
+          "Microsoft.NETCore.Platforms": "1.1.0"
+        }
+      },
+      "Newtonsoft.Json/11.0.2": {
+        "runtime": {
+          "lib/netstandard2.0/Newtonsoft.Json.dll": {
+            "assemblyVersion": "11.0.0.0",
+            "fileVersion": "11.0.2.21924"
+          }
+        }
+      }
+    }
+  },
+  "libraries": {
+    "GraphQL.Client.Extensions/0.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "GraphQL.Client/1.0.3": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-PyG2GkAOZwUEhN4TppmsGBYz+sGlexpP5yA1iHtvv4qYTZ2UVZ11Bhok/95V5uoH2Co/aQtrm96pXytqW1Aaig==",
+      "path": "graphql.client/1.0.3",
+      "hashPath": "graphql.client.1.0.3.nupkg.sha512"
+    },
+    "GraphQL.Common/1.0.3": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-Y/cnLgeukPHkTOzXdFZDc9VjIBdy+uOuQFmUCljEV/8/CzBxgx37Jbc4o8iTKKjnLGXjx7+E8EdTMaCNwNP5FQ==",
+      "path": "graphql.common/1.0.3",
+      "hashPath": "graphql.common.1.0.3.nupkg.sha512"
+    },
+    "Microsoft.CSharp/4.4.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-A5hI3gk6WpcBI0QGZY6/d5CCaYUxJgi7iENn1uYEng+Olo8RfI5ReGVkjXjeu3VR3srLvVYREATXa2M0X7FYJA==",
+      "path": "microsoft.csharp/4.4.1",
+      "hashPath": "microsoft.csharp.4.4.1.nupkg.sha512"
+    },
+    "Microsoft.NETCore.Platforms/1.1.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-kz0PEW2lhqygehI/d6XsPCQzD7ff7gUJaVGPVETX611eadGsA3A877GdSlU0LRVMCTH/+P3o2iDTak+S08V2+A==",
+      "path": "microsoft.netcore.platforms/1.1.0",
+      "hashPath": "microsoft.netcore.platforms.1.1.0.nupkg.sha512"
+    },
+    "NETStandard.Library/2.0.3": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-st47PosZSHrjECdjeIzZQbzivYBJFv6P2nv4cj2ypdI204DO+vZ7l5raGMiX4eXMJ53RfOIg+/s4DHVZ54Nu2A==",
+      "path": "netstandard.library/2.0.3",
+      "hashPath": "netstandard.library.2.0.3.nupkg.sha512"
+    },
+    "Newtonsoft.Json/11.0.2": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-IvJe1pj7JHEsP8B8J8DwlMEx8UInrs/x+9oVY+oCD13jpLu4JbJU2WCIsMRn5C4yW9+DgkaO8uiVE5VHKjpmdQ==",
+      "path": "newtonsoft.json/11.0.2",
+      "hashPath": "newtonsoft.json.11.0.2.nupkg.sha512"
+    }
+  }
+}
