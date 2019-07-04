@@ -1,5 +1,7 @@
 # GraphQL Client Extensions Sample: Pokedex
 
+This sample is base on the [GraphQL Pokémon](https://github.com/lucasbento/graphql-pokemon) API
+
 ## Build
 
 ### Windows
