@@ -10,7 +10,7 @@ Extensions for [GraphQL.Client](https://github.com/graphql-dotnet/graphql-client
 
 See complete documentation [here](https://charlesdevandiere.github.io/graphql-client-extensions/)
 
-See complete documentation [here](https://charlesdevandiere.github.io/graphql-client-extensions/)
+See sample [here](sample/Pokedex)
 
 ## Install
 
