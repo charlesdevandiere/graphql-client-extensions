@@ -1,13 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using NSubstitute;
 
 namespace GraphQL.Client.Extensions.IntegrationTests
 {

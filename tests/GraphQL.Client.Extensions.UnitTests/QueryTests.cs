@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using NSubstitute;
 
 namespace GraphQL.Client.Extensions.UnitTests
 {
