@@ -101,7 +101,7 @@ namespace GraphQL.Client.Extensions.UnitTests
         {
             var query = new Query<Truck>("truck")
                 .AddField(truck => truck.Name)
-                .AddField(truck => truck.WeelsNumber)
+                .AddField(truck => truck.WheelsNumber)
                 .AddField(
                     truck => truck.Load,
                     sq => sq
@@ -110,7 +110,7 @@ namespace GraphQL.Client.Extensions.UnitTests
             Assert.AreEqual("truck", query.Name);
             Assert.AreEqual(3, query.SelectList.Count);
             Assert.AreEqual("name", query.SelectList[0]);
-            Assert.AreEqual("weelsNumber", query.SelectList[1]);
+            Assert.AreEqual("wheelsNumber", query.SelectList[1]);
 
             Assert.AreEqual("load", (query.SelectList[2] as IQuery<Load>).Name);
             var expectedSubSelectList = new List<string>
@@ -126,7 +126,7 @@ namespace GraphQL.Client.Extensions.UnitTests
             var query = new Query<Truck>("truck")
                 .AddArguments(new { id = "yk8h4vn0", km = 2100, imported = true })
                 .AddField(truck => truck.Name)
-                .AddField(truck => truck.WeelsNumber)
+                .AddField(truck => truck.WheelsNumber)
                 .AddField(
                     truck => truck.Load,
                     sq => sq
@@ -134,7 +134,7 @@ namespace GraphQL.Client.Extensions.UnitTests
 
             string result = query.Build();
 
-            Assert.AreEqual("truck(id:\"yk8h4vn0\",km:2100,imported:true){name weelsNumber load{weight}}", result);
+            Assert.AreEqual("truck(id:\"yk8h4vn0\",km:2100,imported:true){name wheelsNumber load{weight}}", result);
         }
 
         [TestMethod]
