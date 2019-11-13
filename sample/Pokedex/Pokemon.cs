@@ -47,7 +47,6 @@ namespace Pokedex
             {
                 sb.AppendLine(this.Attacks.ToString());
             }
-            sb.AppendLine();
 
             return sb.ToString();
         }
