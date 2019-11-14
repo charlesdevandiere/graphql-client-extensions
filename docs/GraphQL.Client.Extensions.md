@@ -10,8 +10,10 @@ Static Methods
 
 | Type | Name | Summary | 
 | --- | --- | --- | 
-| `Task<T>` | Get(this `GraphQLClient` gqlClient, `IQuery<T>` query, `String` resultName = null, `CancellationToken` cancellationToken = null) | Given a type return the results of a GraphQL query in it. If  the type is a string then will return the JSON string. The resultName  will be automatically set the Name or Alias name if not specified.  For Raw queries you must set the resultName param OR set the Name() in  the query to match. This handles server connection here! | 
-| `Task<T>` | Post(this `GraphQLClient` gqlClient, `IQuery<T>` query, `String` resultName = null, `CancellationToken` cancellationToken = null) | Given a type return the results of a GraphQL query in it. If  the type is a string then will return the JSON string. The resultName  will be automatically set the Name or Alias name if not specified.  For Raw queries you must set the resultName param OR set the Name() in  the query to match. This handles server connection here! | 
+| `Task<T>` | Get(this `GraphQLClient` gqlClient, `IQuery` query, `CancellationToken` cancellationToken = null) | Send a `GraphQL.Common.Request.GraphQLRequest` via GET. | 
+| `Task<IReadOnlyDictionary<String, JToken>>` | GetBatch(this `GraphQLClient` gqlClient, `IQuery[]` queries, `CancellationToken` cancellationToken = null) | Send a `GraphQL.Common.Request.GraphQLRequest` composed of a query batch via GET. | 
+| `Task<T>` | Post(this `GraphQLClient` gqlClient, `IQuery` query, `CancellationToken` cancellationToken = null) | Send a `GraphQL.Common.Request.GraphQLRequest` via POST. | 
+| `Task<IReadOnlyDictionary<String, JToken>>` | PostBatch(this `GraphQLClient` gqlClient, `IQuery[]` queries, `CancellationToken` cancellationToken = null) | Send a `GraphQL.Common.Request.GraphQLRequest` composed of a query batch via POST. | 
 
 
 ## `IQuery`
@@ -21,6 +23,14 @@ Query interface
 public interface GraphQL.Client.Extensions.IQuery
 
 ```
+
+Properties
+
+| Type | Name | Summary | 
+| --- | --- | --- | 
+| `String` | AliasName | Gets the query alias name. | 
+| `String` | Name | Gets the query name. | 
+
 
 Methods
 
@@ -42,9 +52,7 @@ Properties
 
 | Type | Name | Summary | 
 | --- | --- | --- | 
-| `String` | AliasName | Gets the query alias name. | 
 | `Dictionary<String, Object>` | ArgumentsMap | Gets the arguments map. | 
-| `String` | Name | Gets the query name. | 
 | `List<Object>` | SelectList | Gets the select list. | 
 
 
