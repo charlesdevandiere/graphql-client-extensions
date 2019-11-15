@@ -125,4 +125,4 @@ using (var client = new GraphQLClient("<url>"))
 
 ## API documentation
 
-See API documentation [here](GraphQL.Client.Extensions)
+See API documentation [here](api)
