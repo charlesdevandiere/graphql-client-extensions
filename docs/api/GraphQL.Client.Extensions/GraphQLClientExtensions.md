@@ -1,6 +1,6 @@
 # GraphQLClientExtensions
 
-`Manespace: GraphQL.Client.Extensions`
+`Namespace: GraphQL.Client.Extensions`
 
 Extensions for the `GraphQL.Client.GraphQLClient` class.
 
@@ -19,4 +19,4 @@ public static class GraphQLClientExtensions
 
 ---
 
-[`< Back`](./)
+[`< Back`](../)

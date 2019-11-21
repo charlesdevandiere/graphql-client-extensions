@@ -1,6 +1,6 @@
 # QueryFormaters
 
-`Manespace: GraphQL.Client.Extensions`
+`Namespace: GraphQL.Client.Extensions`
 
 Query formater class
 
@@ -16,4 +16,4 @@ public static class QueryFormaters
 
 ---
 
-[`< Back`](./)
+[`< Back`](../)

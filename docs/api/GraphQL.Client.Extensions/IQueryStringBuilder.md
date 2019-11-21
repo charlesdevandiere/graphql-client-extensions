@@ -1,6 +1,6 @@
 # IQueryStringBuilder
 
-`Manespace: GraphQL.Client.Extensions`
+`Namespace: GraphQL.Client.Extensions`
 
 Builds a GraphQL query from the Query Object. For parameters it  support simple parameters, ENUMs, Lists, and Objects.  For selections fields it supports sub-selects with params as above.    Most all structures can be recursive, and are unwound as needed
 
@@ -17,4 +17,4 @@ public interface IQueryStringBuilder
 
 ---
 
-[`< Back`](./)
+[`< Back`](../)

@@ -1,6 +1,6 @@
 # IQuery&lt;TSource&gt;
 
-`Manespace: GraphQL.Client.Extensions`
+`Namespace: GraphQL.Client.Extensions`
 
 Query of TSource interface
 
@@ -32,4 +32,4 @@ public interface IQuery<TSource>
 
 ---
 
-[`< Back`](./)
+[`< Back`](../)

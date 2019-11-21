@@ -1,6 +1,6 @@
 # QueryOptions
 
-`Manespace: GraphQL.Client.Extensions`
+`Namespace: GraphQL.Client.Extensions`
 
 Query options class
 
@@ -17,4 +17,4 @@ public class QueryOptions
 
 ---
 
-[`< Back`](./)
+[`< Back`](../)

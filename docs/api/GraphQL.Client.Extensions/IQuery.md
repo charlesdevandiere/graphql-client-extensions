@@ -1,6 +1,6 @@
 # IQuery
 
-`Manespace: GraphQL.Client.Extensions`
+`Namespace: GraphQL.Client.Extensions`
 
 Query interface
 
@@ -23,4 +23,4 @@ public interface IQuery
 
 ---
 
-[`< Back`](./)
+[`< Back`](../)

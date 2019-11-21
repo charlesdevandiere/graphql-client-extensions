@@ -1,6 +1,6 @@
-# References
+# GraphQL.Client.Extensions
 
-## GraphQL.Client.Extensions
+## `GraphQL.Client.Extensions`
 
 - [`GraphQLClientExtensions`](GraphQL.Client.Extensions/GraphQLClientExtensions)
 - [`IQuery`](GraphQL.Client.Extensions/IQuery)
