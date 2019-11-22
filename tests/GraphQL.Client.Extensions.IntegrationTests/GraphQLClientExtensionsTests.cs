@@ -2,13 +2,10 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 
 namespace GraphQL.Client.Extensions.IntegrationTests
 {
-    [TestClass]
-    [DeploymentItem("TestData/batch-query-response-data.json")]
-    [DeploymentItem("TestData/nearest-dealer-response-data.json")]
     public class GraphQLClientExtensionsTests
     {
         enum TestEnum
@@ -30,7 +27,7 @@ namespace GraphQL.Client.Extensions.IntegrationTests
                 .ToArray());
         }
 
-        [TestMethod]
+        [Fact]
         public void Query_SelectParams_ReturnsCorrect()
         {
             const string select = "zip";
@@ -39,10 +36,10 @@ namespace GraphQL.Client.Extensions.IntegrationTests
             var query = new Query<object>("test1").AddField(select);
 
             // Assert
-            Assert.AreEqual(select, query.SelectList.First());
+            Assert.Equal(select, query.SelectList.First());
         }
 
-        [TestMethod]
+        [Fact]
         public void Query_Unique_ReturnsCorrect()
         {
             // Arrange
@@ -50,22 +47,22 @@ namespace GraphQL.Client.Extensions.IntegrationTests
             var query1 = new Query<object>("test1").AddField("pitydodah");
 
             // Assert counts and not the same
-            Assert.IsTrue(query.SelectList.Count == 1);
-            Assert.IsTrue(query1.SelectList.Count == 1);
-            Assert.AreNotEqual(query.SelectList.First(), query1.SelectList.First());
+            Assert.True(query.SelectList.Count == 1);
+            Assert.True(query1.SelectList.Count == 1);
+            Assert.NotEqual(query.SelectList.First(), query1.SelectList.First());
         }
 
-        [TestMethod]
+        [Fact]
         public void Query_Build_ReturnsCorrect()
         {
             // Arrange
             var query = new Query<object>("test1").AddField("id");
 
             // Assert
-            Assert.AreEqual("test1{id}", RemoveWhitespace(query.Build()));
+            Assert.Equal("test1{id}", RemoveWhitespace(query.Build()));
         }
 
-        [TestMethod]
+        [Fact]
         public void ComplexQuery_Build_Check()
         {
             // Arrange
@@ -150,7 +147,7 @@ namespace GraphQL.Client.Extensions.IntegrationTests
                 }");
 
             // Best be the same!
-            Assert.AreEqual(packedResults, packedCheck);
+            Assert.Equal(packedResults, packedCheck);
         }
     }
 }

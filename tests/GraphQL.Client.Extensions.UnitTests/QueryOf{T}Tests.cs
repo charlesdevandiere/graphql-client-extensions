@@ -1,50 +1,49 @@
 using System.Collections.Generic;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using GraphQL.Client.Extensions.UnitTests.Models;
 using System.Linq;
+using Xunit;
 
 namespace GraphQL.Client.Extensions.UnitTests
 {
-    [TestClass]
     public class QueryOfTTests
     {
-        [TestMethod]
+        [Fact]
         public void TestSelect()
         {
             var query = new Query<Car>("car");
             query.AddField(c => c.Name);
 
-            CollectionAssert.AreEqual(new List<string> { nameof(Car.Name) }, query.SelectList);
+            Assert.Equal(new List<string> { nameof(Car.Name) }, query.SelectList);
         }
 
-        [TestMethod]
+        [Fact]
         public void TestSubSelect()
         {
             var query = new Query<Car>("car");
             query.AddField(c => c.Color, sq => sq);
 
-            Assert.AreEqual(nameof(Car.Color), (query.SelectList[0] as IQuery<Color>).Name);
+            Assert.Equal(nameof(Car.Color), (query.SelectList[0] as IQuery<Color>).Name);
         }
 
-        [TestMethod]
+        [Fact]
         public void TestSelectWithCustomName()
         {
             var query = new Query<Truck>("truck");
             query.AddField(t => t.Name);
 
-            CollectionAssert.AreEqual(new List<string> { "name" }, query.SelectList);
+            Assert.Equal(new List<string> { "name" }, query.SelectList);
         }
 
-        [TestMethod]
+        [Fact]
         public void TestSubSelectWithCustomName()
         {
             var query = new Query<Truck>("truck");
             query.AddField(t => t.Load, sq => sq);
 
-            Assert.AreEqual("load", (query.SelectList[0] as IQuery<Load>).Name);
+            Assert.Equal("load", (query.SelectList[0] as IQuery<Load>).Name);
         }
 
-        [TestMethod]
+        [Fact]
         public void TestSelectWithCustomFormater()
         {
             var query = new Query<Car>("car", options: new QueryOptions
@@ -53,10 +52,10 @@ namespace GraphQL.Client.Extensions.UnitTests
             });
             query.AddField(c => c.Name);
 
-            CollectionAssert.AreEqual(new List<string> { "name" }, query.SelectList);
+            Assert.Equal(new List<string> { "name" }, query.SelectList);
         }
 
-        [TestMethod]
+        [Fact]
         public void TestSubSelectWithCustomFormater()
         {
             var query = new Query<Car>("car", options: new QueryOptions
@@ -65,10 +64,10 @@ namespace GraphQL.Client.Extensions.UnitTests
             });
             query.AddField(c => c.Color, sq => sq);
 
-            Assert.AreEqual("color", (query.SelectList[0] as IQuery<Color>).Name);
+            Assert.Equal("color", (query.SelectList[0] as IQuery<Color>).Name);
         }
 
-        [TestMethod]
+        [Fact]
         public void TestQuery()
         {
             var query = new Query<Car>(nameof(Car))
@@ -81,22 +80,22 @@ namespace GraphQL.Client.Extensions.UnitTests
                         .AddField(color => color.Green)
                         .AddField(color => color.Blue));
 
-            Assert.AreEqual(nameof(Car), query.Name);
-            Assert.AreEqual(3, query.SelectList.Count);
-            Assert.AreEqual(nameof(Car.Name), query.SelectList[0]);
-            Assert.AreEqual(nameof(Car.Price), query.SelectList[1]);
+            Assert.Equal(nameof(Car), query.Name);
+            Assert.Equal(3, query.SelectList.Count);
+            Assert.Equal(nameof(Car.Name), query.SelectList[0]);
+            Assert.Equal(nameof(Car.Price), query.SelectList[1]);
 
-            Assert.AreEqual(nameof(Car.Color), (query.SelectList[2] as IQuery<Color>).Name);
+            Assert.Equal(nameof(Car.Color), (query.SelectList[2] as IQuery<Color>).Name);
             var expectedSubSelectList = new List<string>
             {
                 nameof(Color.Red),
                 nameof(Color.Green),
                 nameof(Color.Blue)
             };
-            CollectionAssert.AreEqual(expectedSubSelectList, (query.SelectList[2] as IQuery<Color>).SelectList);
+            Assert.Equal(expectedSubSelectList, (query.SelectList[2] as IQuery<Color>).SelectList);
         }
 
-        [TestMethod]
+        [Fact]
         public void TestQueryWithCustomName()
         {
             var query = new Query<Truck>("truck")
@@ -107,20 +106,20 @@ namespace GraphQL.Client.Extensions.UnitTests
                     sq => sq
                         .AddField(load => load.Weight));
 
-            Assert.AreEqual("truck", query.Name);
-            Assert.AreEqual(3, query.SelectList.Count);
-            Assert.AreEqual("name", query.SelectList[0]);
-            Assert.AreEqual("wheelsNumber", query.SelectList[1]);
+            Assert.Equal("truck", query.Name);
+            Assert.Equal(3, query.SelectList.Count);
+            Assert.Equal("name", query.SelectList[0]);
+            Assert.Equal("wheelsNumber", query.SelectList[1]);
 
-            Assert.AreEqual("load", (query.SelectList[2] as IQuery<Load>).Name);
+            Assert.Equal("load", (query.SelectList[2] as IQuery<Load>).Name);
             var expectedSubSelectList = new List<string>
             {
                 "weight"
             };
-            CollectionAssert.AreEqual(expectedSubSelectList, (query.SelectList[2] as IQuery<Load>).SelectList);
+            Assert.Equal(expectedSubSelectList, (query.SelectList[2] as IQuery<Load>).SelectList);
         }
 
-        [TestMethod]
+        [Fact]
         public void TestQueryBuild()
         {
             var query = new Query<Truck>("truck")
@@ -134,10 +133,10 @@ namespace GraphQL.Client.Extensions.UnitTests
 
             string result = query.Build();
 
-            Assert.AreEqual("truck(id:\"yk8h4vn0\",km:2100,imported:true){name wheelsNumber load{weight}}", result);
+            Assert.Equal("truck(id:\"yk8h4vn0\",km:2100,imported:true){name wheelsNumber load{weight}}", result);
         }
 
-        [TestMethod]
+        [Fact]
         public void TestSubSelectWithList()
         {
             var query = new Query<ObjectWithList>("object")
@@ -146,10 +145,10 @@ namespace GraphQL.Client.Extensions.UnitTests
                 .AddField<SubObject>(c => c.IQueryable, sq => sq)
                 .AddField<SubObject>(c => c.Array, sq => sq);
 
-            Assert.AreEqual(typeof(Query<SubObject>), query.SelectList[0].GetType());
-            Assert.AreEqual(typeof(Query<SubObject>), query.SelectList[1].GetType());
-            Assert.AreEqual(typeof(Query<SubObject>), query.SelectList[2].GetType());
-            Assert.AreEqual(typeof(Query<SubObject>), query.SelectList[3].GetType());
+            Assert.Equal(typeof(Query<SubObject>), query.SelectList[0].GetType());
+            Assert.Equal(typeof(Query<SubObject>), query.SelectList[1].GetType());
+            Assert.Equal(typeof(Query<SubObject>), query.SelectList[2].GetType());
+            Assert.Equal(typeof(Query<SubObject>), query.SelectList[3].GetType());
         }
 
         class ObjectWithList

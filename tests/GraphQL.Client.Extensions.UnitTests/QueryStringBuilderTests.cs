@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using GraphQL.Client.Extensions.UnitTests.Models;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 
 namespace GraphQL.Client.Extensions.UnitTests
 {
-    [TestClass]
     public class QueryStringBuilderTests
     {
         enum TestEnum
@@ -29,7 +28,7 @@ namespace GraphQL.Client.Extensions.UnitTests
                 .ToArray());
         }
 
-        [TestMethod]
+        [Fact]
         public void BuildQueryParam_IntType_ParseInt()
         {
             // Arrange
@@ -39,10 +38,10 @@ namespace GraphQL.Client.Extensions.UnitTests
             string intStr = queryString.BuildQueryParam(123);
 
             // Assert
-            Assert.AreEqual("123", intStr);
+            Assert.Equal("123", intStr);
         }
 
-        [TestMethod]
+        [Fact]
         public void BuildQueryParam_QuotedStringType_ParseString()
         {
             // Arrange
@@ -52,10 +51,10 @@ namespace GraphQL.Client.Extensions.UnitTests
             string strStr = queryString.BuildQueryParam("Haystack");
 
             // Assert
-            Assert.AreEqual("\"Haystack\"", strStr);
+            Assert.Equal("\"Haystack\"", strStr);
         }
 
-        [TestMethod]
+        [Fact]
         public void BuildQueryParam_DoubleType_ParseDouble()
         {
             // Arrange
@@ -65,10 +64,10 @@ namespace GraphQL.Client.Extensions.UnitTests
             string doubleStr = queryString.BuildQueryParam(1234.5678);
 
             // Assert
-            Assert.AreEqual("1234.5678", doubleStr);
+            Assert.Equal("1234.5678", doubleStr);
         }
 
-        [TestMethod]
+        [Fact]
         public void BuildQueryParam_EnumType_ParseEnum()
         {
             // Arrange
@@ -78,10 +77,10 @@ namespace GraphQL.Client.Extensions.UnitTests
             string enumStr = queryString.BuildQueryParam(TestEnum.DISABLED);
 
             // Assert
-            Assert.AreEqual("DISABLED", enumStr);
+            Assert.Equal("DISABLED", enumStr);
         }
 
-        [TestMethod]
+        [Fact]
         public void BuildQueryParam_CustomType_ParseCustom()
         {
             // Arrange
@@ -96,10 +95,10 @@ namespace GraphQL.Client.Extensions.UnitTests
             string fromToMapStr = queryString.BuildQueryParam(fromToMap);
 
             // Assert
-            Assert.AreEqual("{from:444.45, to:555.45}", fromToMapStr);
+            Assert.Equal("{from:444.45, to:555.45}", fromToMapStr);
         }
 
-        [TestMethod]
+        [Fact]
         public void BuildQueryParam_ListType_ParseList()
         {
             // Arrange
@@ -110,10 +109,10 @@ namespace GraphQL.Client.Extensions.UnitTests
             string intListStr = queryString.BuildQueryParam(intList);
 
             // Assert
-            Assert.AreEqual("[43783, 43784, 43145]", intListStr);
+            Assert.Equal("[43783, 43784, 43145]", intListStr);
         }
 
-        [TestMethod]
+        [Fact]
         public void BuildQueryParam_StringListType_ParseStringList()
         {
             // Arrange
@@ -124,10 +123,10 @@ namespace GraphQL.Client.Extensions.UnitTests
             string strListStr = queryString.BuildQueryParam(strList);
 
             // Assert
-            Assert.AreEqual("[\"DB7\", \"DB9\", \"Vantage\"]", strListStr);
+            Assert.Equal("[\"DB7\", \"DB9\", \"Vantage\"]", strListStr);
         }
 
-        [TestMethod]
+        [Fact]
         public void BuildQueryParam_DoubleListType_ParseDoubleList()
         {
             // Arrange
@@ -138,10 +137,10 @@ namespace GraphQL.Client.Extensions.UnitTests
             string doubleListStr = queryString.BuildQueryParam(doubleList);
 
             // Assert
-            Assert.AreEqual("[123.456, 456, 78.901]", doubleListStr);
+            Assert.Equal("[123.456, 456, 78.901]", doubleListStr);
         }
 
-        [TestMethod]
+        [Fact]
         public void BuildQueryParam_EnumListType_ParseEnumList()
         {
             // Arrange
@@ -152,10 +151,10 @@ namespace GraphQL.Client.Extensions.UnitTests
             string enumListStr = queryString.BuildQueryParam(enumList);
 
             // Assert
-            Assert.AreEqual("[ENABLED, DISABLED, HAYstack]", enumListStr);
+            Assert.Equal("[ENABLED, DISABLED, HAYstack]", enumListStr);
         }
 
-        [TestMethod]
+        [Fact]
         public void BuildQueryParam_NestedListType_ParseNestedList()
         {
             // Arrange
@@ -181,10 +180,10 @@ namespace GraphQL.Client.Extensions.UnitTests
             string nestedListMapStr = queryString.BuildQueryParam(nestedListMap);
 
             // Assert
-            Assert.AreEqual("{from:123, to:454, recurse:[\"aa\", \"bb\", \"cc\"], map:{from:444.45, to:555.45}, name:HAYstack}", nestedListMapStr);
+            Assert.Equal("{from:123, to:454, recurse:[\"aa\", \"bb\", \"cc\"], map:{from:444.45, to:555.45}, name:HAYstack}", nestedListMapStr);
         }
 
-        [TestMethod]
+        [Fact]
         public void Where_QueryString_ParseQueryString()
         {
             // Arrange
@@ -219,10 +218,10 @@ namespace GraphQL.Client.Extensions.UnitTests
             string addParamStr = RemoveWhitespace(queryString.QueryString.ToString());
 
             // Assert
-            Assert.AreEqual(RemoveWhitespace("from:123,to:454,recurse:[\"aa\",\"bb\",\"cc\"],map:{from:444.45,to:555.45},name:HAYstack"), addParamStr);
+            Assert.Equal(RemoveWhitespace("from:123,to:454,recurse:[\"aa\",\"bb\",\"cc\"],map:{from:444.45,to:555.45},name:HAYstack"), addParamStr);
         }
 
-        [TestMethod]
+        [Fact]
         public void Where_ClearQueryString_EmptyQueryString()
         {
             // Arrange
@@ -257,10 +256,10 @@ namespace GraphQL.Client.Extensions.UnitTests
             queryString.QueryString.Clear();
 
             // Assert
-            Assert.IsTrue(string.IsNullOrEmpty(queryString.QueryString.ToString()));
+            Assert.True(string.IsNullOrEmpty(queryString.QueryString.ToString()));
         }
 
-        [TestMethod]
+        [Fact]
         public void Select_QueryString_ParseQueryString()
         {
             // Arrange
@@ -292,10 +291,10 @@ namespace GraphQL.Client.Extensions.UnitTests
             string addParamStr = RemoveWhitespace(builder.QueryString.ToString());
 
             // Assert
-            Assert.AreEqual(RemoveWhitespace("morethingsin_a_selectsubSelect(subMake:\"aston martin\",subState:\"ca\",subLimit:1,__debug:DISABLED,SuperQuerySpeed:ENABLED){subNamesubMakesubModel}"), addParamStr);
+            Assert.Equal(RemoveWhitespace("morethingsin_a_selectsubSelect(subMake:\"aston martin\",subState:\"ca\",subLimit:1,__debug:DISABLED,SuperQuerySpeed:ENABLED){subNamesubMakesubModel}"), addParamStr);
         }
 
-        [TestMethod]
+        [Fact]
         public void Build_AllElements_StringMatch()
         {
             // Arrange
@@ -323,7 +322,7 @@ namespace GraphQL.Client.Extensions.UnitTests
             string buildStr = RemoveWhitespace(query.Build());
 
             // Assert
-            Assert.AreEqual(RemoveWhitespace("test1Alias:test1{morethingsin_a_selectsubSelect(subMake:\"aston martin\",subState:\"ca\",subLimit:1,__debug:DISABLED,SuperQuerySpeed:ENABLED){subNamesubMakesubModel}}"), buildStr);
+            Assert.Equal(RemoveWhitespace("test1Alias:test1{morethingsin_a_selectsubSelect(subMake:\"aston martin\",subState:\"ca\",subLimit:1,__debug:DISABLED,SuperQuerySpeed:ENABLED){subNamesubMakesubModel}}"), buildStr);
         }
     }
 }
