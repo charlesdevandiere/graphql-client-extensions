@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\GraphQL.Client.Extensions\GraphQL.Client.Extensions.csproj" />
+    <ProjectReference Include="..\..\sample\Models\Models.csproj" />
   </ItemGroup>
 
 </Project>

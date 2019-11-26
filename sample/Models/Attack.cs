@@ -1,6 +1,6 @@
 using Newtonsoft.Json;
 
-namespace Pokedex
+namespace Shared.Models
 {
     public class Attack
     {

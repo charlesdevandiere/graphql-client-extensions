@@ -1,8 +1,8 @@
-using Newtonsoft.Json;
 using System;
 using System.Text;
+using Newtonsoft.Json;
 
-namespace Pokedex
+namespace Shared.Models
 {
     public class PokemonAttack
     {

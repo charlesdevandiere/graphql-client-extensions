@@ -2,12 +2,17 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Threading.Tasks;
+using Newtonsoft.Json.Linq;
+using Shared.Models;
 using Xunit;
 
 namespace GraphQL.Client.Extensions.IntegrationTests
 {
     public class GraphQLClientExtensionsTests
     {
+        const string URL = "https://graphql-pokemon.now.sh";
+
         enum TestEnum
         {
             ENABLED,
@@ -66,7 +71,7 @@ namespace GraphQL.Client.Extensions.IntegrationTests
         public void ComplexQuery_Build_Check()
         {
             // Arrange
-            
+
             // set up a subselection parameter (where)
             // has simple string, int, and a couple of ENUMs
             Dictionary<string, object> mySubDict = new Dictionary<string, object>
@@ -148,6 +153,48 @@ namespace GraphQL.Client.Extensions.IntegrationTests
 
             // Best be the same!
             Assert.Equal(packedResults, packedCheck);
+        }
+
+        [Fact]
+        public async Task TestGetBatch()
+        {
+            Func<string, IQuery<Pokemon>> query = (string name) => new Query<Pokemon>("pokemon")
+                .Alias(name)
+                .AddArguments(new { name })
+                .AddField(p => p.Name);
+
+            using var client = new GraphQLClient(URL);
+
+            IReadOnlyDictionary<string, JToken> batch = await client.GetBatch(new IQuery[] { query("Pikachu"), query("Bulbasaur") });
+
+            Pokemon pikachu = batch["Pikachu"].ToObject<Pokemon>();
+            Assert.NotNull(pikachu);
+            Assert.Equal("Pikachu", pikachu.Name);
+
+            Pokemon bulbasaur = batch["Bulbasaur"].ToObject<Pokemon>();
+            Assert.NotNull(bulbasaur);
+            Assert.Equal("Bulbasaur", bulbasaur.Name);
+        }
+
+        [Fact]
+        public async Task TestPostBatch()
+        {
+            Func<string, IQuery<Pokemon>> query = (string name) => new Query<Pokemon>("pokemon")
+                .Alias(name)
+                .AddArguments(new { name })
+                .AddField(p => p.Name);
+
+            using var client = new GraphQLClient(URL);
+
+            IReadOnlyDictionary<string, JToken> batch = await client.PostBatch(new IQuery[] { query("Pikachu"), query("Bulbasaur") });
+
+            Pokemon pikachu = batch["Pikachu"].ToObject<Pokemon>();
+            Assert.NotNull(pikachu);
+            Assert.Equal("Pikachu", pikachu.Name);
+
+            Pokemon bulbasaur = batch["Bulbasaur"].ToObject<Pokemon>();
+            Assert.NotNull(bulbasaur);
+            Assert.Equal("Bulbasaur", bulbasaur.Name);
         }
     }
 }

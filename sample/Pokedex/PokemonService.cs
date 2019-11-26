@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using GraphQL.Client;
 using GraphQL.Client.Extensions;
 using Newtonsoft.Json.Linq;
+using Shared.Models;
 
 namespace Pokedex
 {
