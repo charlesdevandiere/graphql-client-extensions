@@ -34,10 +34,10 @@ steps:
   displayName: 'Publish test results'
   inputs:
     testRunner: 'xUnit'
-    testResultsFiles: '**/cobertura.xml'
+    testResultsFiles: '**/*.cobertura.xml'
 
 - task: PublishBuildArtifacts@1
-  displayName: 'Publish Artifact'
+  displayName: 'Publish artifact'
   condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
   inputs:
     PathtoPublish: $(Build.ArtifactStagingDirectory)\out
