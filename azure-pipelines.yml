@@ -24,6 +24,9 @@ steps:
 - script: GitVersion /output buildserver
   displayName: GitVersion
 
+- script: dotnet tool restore
+  displayName: 'dotnet tool restore'
+
 - script: dotnet pack -c $(buildConfiguration) -o $(Build.ArtifactStagingDirectory)\out -p:Version=$(GitVersion.SemVer) --include-symbols
   displayName: 'dotnet pack'
 
@@ -33,7 +36,7 @@ steps:
 - task: PublishTestResults@2
   displayName: 'Publish test results'
   inputs:
-    testRunner: xUnit
+    testRunner: VSTest
     testResultsFiles: '**/*.trx'
 
 - script: dotnet tool run reportgenerator -reports:**/coverage.cobertura.xml -targetdir:tests/coverage -reportTypes:Cobertura
