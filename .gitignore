@@ -51,4 +51,4 @@ Thumbs.db
 /.vs
 
 # test
-*.cobertura.xml
+*cobertura.xml

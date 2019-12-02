@@ -7,6 +7,12 @@
       "commands": [
         "xmldoc2md"
       ]
+    },
+    "dotnet-reportgenerator-globaltool": {
+      "version": "4.3.6",
+      "commands": [
+        "reportgenerator"
+      ]
     }
   }
 }

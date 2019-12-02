@@ -36,10 +36,13 @@ steps:
     testRunner: xUnit
     testResultsFiles: '**/*.trx'
 
+- script: dotnet tool run reportgenerator -reports:**/coverage.cobertura.xml -targetdir:tests/coverage -reportTypes:Cobertura
+  displayName: 'Generate code coverage report'
+
 - task: PublishCodeCoverageResults@1
   inputs:
     codeCoverageTool: cobertura
-    summaryFileLocation: '**/*.cobertura.xml'
+    summaryFileLocation: '**/Cobertura.xml'
 
 - task: PublishBuildArtifacts@1
   displayName: 'Publish artifact'
