@@ -49,3 +49,6 @@ Thumbs.db
 /.vs/slnx.sqlite
 /.vs/ProjectSettings.json
 /.vs
+
+# test
+*.cobertura.xml

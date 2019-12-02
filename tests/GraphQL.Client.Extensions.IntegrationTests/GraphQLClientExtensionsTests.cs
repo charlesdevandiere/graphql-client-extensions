@@ -196,5 +196,37 @@ namespace GraphQL.Client.Extensions.IntegrationTests
             Assert.NotNull(bulbasaur);
             Assert.Equal("Bulbasaur", bulbasaur.Name);
         }
+
+        [Fact]
+        public async Task TestStringResult()
+        {
+            var query = new Query<Pokemon>("pokemon")
+                .AddArguments(new { name = "pikachu" })
+                .AddField(p => p.Name);
+
+            using var client = new GraphQLClient(URL);
+
+            string json = await client.Get<string>(query);
+
+            JToken jToken = JToken.Parse(json);
+
+            Assert.Equal(jToken.Count(), 1);
+            Assert.Equal(jToken["name"], "Pikachu");
+        }
+
+        [Fact]
+        public async Task TestJTokenResult()
+        {
+            var query = new Query<Pokemon>("pokemon")
+                .AddArguments(new { name = "pikachu" })
+                .AddField(p => p.Name);
+
+            using var client = new GraphQLClient(URL);
+
+            JToken jToken = await client.Get<JToken>(query);
+
+            Assert.Equal(jToken.Count(), 1);
+            Assert.Equal(jToken["name"], "Pikachu");
+        }
     }
 }

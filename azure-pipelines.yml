@@ -27,14 +27,14 @@ steps:
 - script: dotnet pack -c $(buildConfiguration) -o $(Build.ArtifactStagingDirectory)\out -p:Version=$(GitVersion.SemVer) --include-symbols
   displayName: 'dotnet pack'
 
-- script: dotnet test -c $(buildConfiguration) --logger trx --collect "Code coverage"
+- script: dotnet test -c $(buildConfiguration) -p:CollectCoverage=true -p:CoverletOutputFormat=cobertura
   displayName: 'dotnet test'
 
 - task: PublishTestResults@2
   displayName: 'Publish test results'
   inputs:
-    testRunner: VSTest
-    testResultsFiles: '**/*.trx'
+    testRunner: 'xUnit'
+    testResultsFiles: '**/cobertura.xml'
 
 - task: PublishBuildArtifacts@1
   displayName: 'Publish Artifact'
