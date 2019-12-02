@@ -30,7 +30,7 @@ steps:
 - script: dotnet pack -c $(buildConfiguration) -o $(Build.ArtifactStagingDirectory)\out -p:Version=$(GitVersion.SemVer) --include-symbols
   displayName: 'dotnet pack'
 
-- script: dotnet test -c $(buildConfiguration) --logger trx -p:CollectCoverage=true -p:CoverletOutputFormat=cobertura
+- script: dotnet test -c $(buildConfiguration) --logger trx -p:CollectCoverage=true -p:CoverletOutputFormat=cobertura -p:Exclude="[*]Shared.Models.*"
   displayName: 'dotnet test'
 
 - task: PublishTestResults@2
