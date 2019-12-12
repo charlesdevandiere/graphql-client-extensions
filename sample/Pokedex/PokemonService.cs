@@ -52,12 +52,10 @@ namespace Pokedex
         {
             var query = pokemonQuery(name);
 
-            using (var client = new GraphQLClient(this.graphqlPokemonUrl))
-            {
-                var pokemon = await client.Get<Pokemon>(query);
+            using var client = new GraphQLClient(this.graphqlPokemonUrl);
+            var pokemon = await client.Get<Pokemon>(query);
 
-                return pokemon;
-            }
+            return pokemon;
         }
 
         /// <summary>Returns a Pokemon batch</summary>
@@ -66,12 +64,10 @@ namespace Pokedex
         {
             IQuery[] queries = names.Select(name => pokemonQuery(name)).ToArray();
 
-            using (var client = new GraphQLClient(this.graphqlPokemonUrl))
-            {
-                IReadOnlyDictionary<string, JToken> batch = await client.GetBatch(queries);
+            using var client = new GraphQLClient(this.graphqlPokemonUrl);
+            IReadOnlyDictionary<string, JToken> batch = await client.GetBatch(queries);
 
-                return batch.Values.Select(jToken => jToken.ToObject<Pokemon>());
-            }
+            return batch.Values.Select(jToken => jToken.ToObject<Pokemon>());
         }
 
         /// <summary>Returns all Pokemons</summary>
@@ -92,12 +88,10 @@ namespace Pokedex
                 )
                 .AddField(p => p.Types);
 
-            using (var client = new GraphQLClient(this.graphqlPokemonUrl))
-            {
-                var pokemons = await client.Get<IEnumerable<Pokemon>>(query);
+            using var client = new GraphQLClient(this.graphqlPokemonUrl);
+            var pokemons = await client.Get<IEnumerable<Pokemon>>(query);
 
-                return pokemons;
-            }
+            return pokemons;
         }
     }
 }
