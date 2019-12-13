@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
@@ -13,146 +12,87 @@ namespace GraphQL.Client.Extensions.IntegrationTests
     {
         const string URL = "https://graphql-pokemon.now.sh";
 
-        enum TestEnum
-        {
-            ENABLED,
-            DISABLED,
-            HAYstack
-        }
-
-        public GraphQLClientExtensionsTests()
-        {
-            CultureInfo.CurrentCulture = new CultureInfo("en-us", false);
-        }
-
-        private static string RemoveWhitespace(string input)
-        {
-            return new string(input.ToCharArray()
-                .Where(c => !Char.IsWhiteSpace(c))
-                .ToArray());
-        }
-
         [Fact]
-        public void Query_SelectParams_ReturnsCorrect()
+        public async Task TestGet()
         {
-            const string select = "zip";
-
-            // Arrange
-            var query = new Query<object>("test1").AddField(select);
-
-            // Assert
-            Assert.Equal(select, query.SelectList.First());
-        }
-
-        [Fact]
-        public void Query_Unique_ReturnsCorrect()
-        {
-            // Arrange
-            var query = new Query<object>("test1").AddField("zip");
-            var query1 = new Query<object>("test1").AddField("pitydodah");
-
-            // Assert counts and not the same
-            Assert.True(query.SelectList.Count == 1);
-            Assert.True(query1.SelectList.Count == 1);
-            Assert.NotEqual(query.SelectList.First(), query1.SelectList.First());
-        }
-
-        [Fact]
-        public void Query_Build_ReturnsCorrect()
-        {
-            // Arrange
-            var query = new Query<object>("test1").AddField("id");
-
-            // Assert
-            Assert.Equal("test1{id}", RemoveWhitespace(query.Build()));
-        }
-
-        [Fact]
-        public void ComplexQuery_Build_Check()
-        {
-            // Arrange
-
-            // set up a subselection parameter (where)
-            // has simple string, int, and a couple of ENUMs
-            Dictionary<string, object> mySubDict = new Dictionary<string, object>
-            {
-                {"subMake", "aston martin"},
-                {"subState", "ca"},
-                {"subLimit", 1},
-                {"_debug", TestEnum.DISABLED},
-                {"SuperQuerySpeed", TestEnum.ENABLED}
-            };
-
-            // List of int's (IDs)
-            List<int> trimList = new List<int>(new[] { 143783, 243784, 343145 });
-
-            // String List
-            List<string> modelList = new List<string>(new[] { "DB7", "DB9", "Vantage" });
-
-            // Another List but of Generic Objects that should work as strings
-            List<object> recList = new List<object>(new object[] { "aa", "bb", "cc" });
-
-            // try a dict for the typical from to with doubles
-            Dictionary<string, object> recMap = new Dictionary<string, object>
-            {
-                {"from", 444.45},
-                {"to", 555.45},
-            };
-
-            // try a dict for nested list and dict
-            Dictionary<string, object> fromToPrice = new Dictionary<string, object>
-            {
-                {"from", 123},
-                {"to", 454},
-                {"recurse", recList},
-                {"map", recMap}
-            };
-
-            // Even more stuff nested in the params
-            Dictionary<string, object> myDict = new Dictionary<string, object>
-            {
-                {"make", "aston martin"},
-                {"state", "ca"},
-                {"limit", 2},
-                {"trims", trimList},
-                {"models", modelList},
-                {"price", fromToPrice},
-                {"_debug", TestEnum.ENABLED},
-            };
-
-            var query = new Query<object>("Dealer")
-                .Alias("myDealerAlias")
-                .AddField("id")
-                .AddField<object>("subDealer", q => q
-                    .AddField("subName")
-                    .AddField("subMake")
-                    .AddField("subModel")
-                    .AddArguments(mySubDict)
+            var query = new Query<Pokemon>("pokemon")
+                .AddArguments(new { name = "pikachu" })
+                .AddField(p => p.Id)
+                .AddField(p => p.Number)
+                .AddField(p => p.Name)
+                .AddField(p => p.Height, hq => hq
+                    .AddField(h => h.Minimum)
+                    .AddField(h => h.Maximum)
+                )
+                .AddField(p => p.Weight, wq => wq
+                    .AddField(w => w.Minimum)
+                    .AddField(w => w.Maximum)
+                )
+                .AddField(p => p.Types)
+                .AddField(p => p.Attacks, aq => aq
+                    .AddField<Attack>(a => a.Fast, fq => fq
+                        .AddField(f => f.Name)
+                        .AddField(f => f.Type)
+                        .AddField(f => f.Damage)
                     )
-                .AddField("name")
-                .AddField("make")
-                .AddField("model")
-                .AddArguments(myDict);
+                    .AddField<Attack>(a => a.Special, sq => sq
+                        .AddField(f => f.Name)
+                        .AddField(f => f.Type)
+                        .AddField(f => f.Damage)
+                    )
+                );
 
-            // Get and pack results
-            string packedResults = RemoveWhitespace(query.Build());
-            string packedCheck = RemoveWhitespace(@"
-                    myDealerAlias: Dealer(make: ""aston martin"", state: ""ca"", limit: 2, trims:[143783, 243784, 343145], models:[""DB7"", ""DB9"", ""Vantage""],
-                    price:{ from: 123, to: 454, recurse:[""aa"", ""bb"", ""cc""], map: { from: 444.45, to: 555.45} },
-                    _debug: ENABLED){
-                    id
-                    subDealer(subMake: ""aston martin"", subState: ""ca"", subLimit: 1, _debug: DISABLED, SuperQuerySpeed: ENABLED){
-                        subName
-                        subMake
-                        subModel
-                    }
-                    name
-                    make
-                    model
-                }");
+            using var client = new GraphQLClient(URL);
 
-            // Best be the same!
-            Assert.Equal(packedResults, packedCheck);
+            Pokemon pikachu = await client.Get<Pokemon>(query);
+
+            Assert.NotNull(pikachu);
+            Assert.Equal("UG9rZW1vbjowMjU=", pikachu.Id);
+            Assert.Equal("025", pikachu.Number);
+            Assert.Equal("Pikachu", pikachu.Name);
+            Assert.Equal("0.35m", pikachu.Height.Minimum);
+            Assert.Equal("0.45m", pikachu.Height.Maximum);
+            Assert.Equal("5.25kg", pikachu.Weight.Minimum);
+            Assert.Equal("6.75kg", pikachu.Weight.Maximum);
+            Assert.Equal(1, pikachu.Types.Count());
+            Assert.Equal("Electric", pikachu.Types[0]);
+            Assert.Equal(2, pikachu.Attacks.Fast.Count());
+            Assert.Equal("Quick Attack", pikachu.Attacks.Fast[0].Name);
+            Assert.Equal("Normal", pikachu.Attacks.Fast[0].Type);
+            Assert.Equal(10, pikachu.Attacks.Fast[0].Damage);
+            Assert.Equal("Thunder Shock", pikachu.Attacks.Fast[1].Name);
+            Assert.Equal("Electric", pikachu.Attacks.Fast[1].Type);
+            Assert.Equal(5, pikachu.Attacks.Fast[1].Damage);
+            Assert.Equal(3, pikachu.Attacks.Special.Count());
+            Assert.Equal("Discharge", pikachu.Attacks.Special[0].Name);
+            Assert.Equal("Electric", pikachu.Attacks.Special[0].Type);
+            Assert.Equal(35, pikachu.Attacks.Special[0].Damage);
+            Assert.Equal("Thunder", pikachu.Attacks.Special[1].Name);
+            Assert.Equal("Electric", pikachu.Attacks.Special[1].Type);
+            Assert.Equal(100, pikachu.Attacks.Special[1].Damage);
+            Assert.Equal("Thunderbolt", pikachu.Attacks.Special[2].Name);
+            Assert.Equal("Electric", pikachu.Attacks.Special[2].Type);
+            Assert.Equal(55, pikachu.Attacks.Special[2].Damage);
+        }
+
+        [Fact]
+        public async Task TestGetList()
+        {
+            var query = new Query<Pokemon>("pokemons")
+                .AddArguments(new { first = 10 })
+                .AddField(p => p.Name);
+
+            using var client = new GraphQLClient(URL);
+
+            IEnumerable<Pokemon> pokemons = await client.Get<IEnumerable<Pokemon>>(query);
+
+            Assert.NotNull(pokemons);
+            Assert.Equal(10, pokemons.Count());
+            Assert.All(pokemons, pokemon =>
+            {
+                Assert.NotNull(pokemon);
+                Assert.NotEmpty(pokemon.Name);
+            });
         }
 
         [Fact]
@@ -174,6 +114,21 @@ namespace GraphQL.Client.Extensions.IntegrationTests
             Pokemon bulbasaur = batch["Bulbasaur"].ToObject<Pokemon>();
             Assert.NotNull(bulbasaur);
             Assert.Equal("Bulbasaur", bulbasaur.Name);
+        }
+
+        [Fact]
+        public async Task TestPost()
+        {
+            var query = new Query<Pokemon>("pokemon")
+                .AddArguments(new { name = "pikachu" })
+                .AddField(p => p.Name);
+
+            using var client = new GraphQLClient(URL);
+
+            Pokemon pikachu = await client.Post<Pokemon>(query);
+
+            Assert.NotNull(pikachu);
+            Assert.Equal("Pikachu", pikachu.Name);
         }
 
         [Fact]
