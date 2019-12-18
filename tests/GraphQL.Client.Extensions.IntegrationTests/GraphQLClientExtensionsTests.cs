@@ -183,5 +183,20 @@ namespace GraphQL.Client.Extensions.IntegrationTests
             Assert.Equal(jToken.Count(), 1);
             Assert.Equal(jToken["name"], "Pikachu");
         }
+
+        [Fact]
+        public async Task TestError()
+        {
+            var query = new Query<Pokemon>("wrongQueryName")
+                .AddArguments(new { name = "pikachu" })
+                .AddField(p => p.Name);
+
+            using var client = new GraphQLClient(URL);
+
+            GraphQLClientException exception = await Assert.ThrowsAsync<GraphQLClientException>(async () => await client.Post<Pokemon>(query));
+            Assert.Equal(
+                $"The GraphQL request returns errors.{Environment.NewLine}Cannot query field \"wrongQueryName\" on type \"Query\".",
+                exception.Message);
+        }
     }
 }

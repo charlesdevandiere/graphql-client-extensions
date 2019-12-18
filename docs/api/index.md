@@ -2,6 +2,7 @@
 
 ## `GraphQL.Client.Extensions`
 
+- [`GraphQLClientException`](GraphQL.Client.Extensions/GraphQLClientException)
 - [`GraphQLClientExtensions`](GraphQL.Client.Extensions/GraphQLClientExtensions)
 - [`IQuery`](GraphQL.Client.Extensions/IQuery)
 - [`IQuery<TSource>`](GraphQL.Client.Extensions/IQuery{TSource})

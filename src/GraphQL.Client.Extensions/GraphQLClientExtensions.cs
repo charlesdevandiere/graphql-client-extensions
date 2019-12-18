@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using GraphQL.Common.Request;
@@ -41,7 +42,7 @@ namespace GraphQL.Client.Extensions
             GraphQLRequest gqlRequest = CreateGraphQLResquest(queries);
             GraphQLResponse gqlResponse = await gqlClient.GetAsync(gqlRequest, cancellationToken);
 
-            return ParseResponse(queries, gqlRequest, gqlResponse);
+            return ParseResponse(queries, gqlResponse);
         }
 
         /// <summary>Send a <see cref="GraphQLRequest" /> via POST.</summary>
@@ -71,13 +72,13 @@ namespace GraphQL.Client.Extensions
             GraphQLRequest gqlRequest = CreateGraphQLResquest(queries);
             GraphQLResponse gqlResponse = await gqlClient.PostAsync(gqlRequest, cancellationToken);
 
-            return ParseResponse(queries, gqlRequest, gqlResponse);
+            return ParseResponse(queries, gqlResponse);
         }
 
         private static T ParseResponse<T>(IQuery query, GraphQLRequest gqlQuery, GraphQLResponse gqlResp)
             where T : class
         {
-            CheckResult(gqlQuery, gqlResp);
+            CheckResponse(gqlResp);
 
             string resultName = string.IsNullOrWhiteSpace(query.AliasName) ? query.Name : query.AliasName;
 
@@ -96,9 +97,9 @@ namespace GraphQL.Client.Extensions
             return value.ToObject<T>();
         }
 
-        private static IReadOnlyDictionary<string, JToken> ParseResponse(IQuery[] queries, GraphQLRequest gqlQuery, GraphQLResponse gqlResp)
+        private static IReadOnlyDictionary<string, JToken> ParseResponse(IQuery[] queries, GraphQLResponse gqlResp)
         {
-            CheckResult(gqlQuery, gqlResp);
+            CheckResponse(gqlResp);
 
             var result = new Dictionary<string, JToken>();
 
@@ -112,27 +113,15 @@ namespace GraphQL.Client.Extensions
             return result;
         }
 
-        private static void CheckResult(GraphQLRequest request, GraphQLResponse response)
+        private static void CheckResponse(GraphQLResponse response)
         {
-            if (response?.Data == null || response?.Errors != null)
+            if (response == null) {
+                throw new InvalidOperationException("Param \"response\" cannot be null.");
+            }
+
+            if (response.Errors != null)
             {
-                string errorMessage = "The GraphQL request return errors.";
-                var errorData = new Dictionary<object, object>();
-                errorData.Add("request", request.ToString());
-
-                if (response?.Errors != null && response.Errors.Length > 0)
-                {
-                    errorMessage += string.Join(" ", response.Errors.Select(error => error.Message));
-                    errorData.Add("errors", response.Errors);
-                }
-
-                Exception exception = new Exception(errorMessage);
-                foreach (KeyValuePair<object, object> data in errorData)
-                {
-                    exception.Data.Add(data.Key, data.Value);
-                }
-
-                throw exception;
+                throw new GraphQLClientException(response.Errors);
             }
         }
 
