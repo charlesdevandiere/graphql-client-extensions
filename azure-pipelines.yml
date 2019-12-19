@@ -36,13 +36,14 @@ steps:
   - script: dotnet pack .\src\GraphQL.Client.Extensions\GraphQL.Client.Extensions.csproj -c $(buildConfiguration) -o $(Build.ArtifactStagingDirectory)\out -p:Version=$(GitVersion.SemVer) --include-symbols
     displayName: "dotnet pack"
 
-  - script: dotnet test -c $(buildConfiguration) --logger trx -p:CollectCoverage=true -p:CoverletOutputFormat=cobertura -p:Exclude="[*]Shared.Models.*"
+  - script: dotnet test -c $(buildConfiguration) --logger xunit -p:CollectCoverage=true -p:CoverletOutputFormat=cobertura -p:Exclude="[*]Shared.Models.*"
     displayName: "dotnet test"
 
   - task: PublishTestResults@2
     displayName: "Publish test results"
     inputs:
       testRunner: xUnit
+      testResultsFiles: "**/TestResults.xml"
 
   - script: dotnet tool run reportgenerator -reports:**/coverage.cobertura.xml -targetdir:tests/coverage -reportTypes:Cobertura
     displayName: "Generate code coverage report"
