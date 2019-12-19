@@ -46,7 +46,7 @@ steps:
       testResultsFiles: '**/TestResults.xml'
 
   - script: dotnet tool run reportgenerator -reports:**/coverage.cobertura.xml -targetdir:tests/coverage -reportTypes:Cobertura
-    displayName: 'Generate code coverage report'
+    displayName: 'generate code coverage report'
 
   - task: PublishCodeCoverageResults@1
     displayName: 'publish code coverage'
