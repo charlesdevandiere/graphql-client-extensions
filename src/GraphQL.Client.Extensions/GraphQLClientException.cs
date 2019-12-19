@@ -21,8 +21,7 @@ namespace GraphQL.Client.Extensions
         public GraphQLClientException(GraphQLError[] errors)
             : base(
                 baseMessage +
-                Environment.NewLine +
-                string.Join(Environment.NewLine, errors?.Select(errors => errors.Message)))
+                string.Concat(errors?.Select(errors => Environment.NewLine + errors.Message)))
         {
             if (errors != null && errors.Length > 0)
             {

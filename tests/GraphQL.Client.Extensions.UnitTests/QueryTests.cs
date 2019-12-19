@@ -225,18 +225,13 @@ namespace GraphQL.Client.Extensions.UnitTests
         }
 
         [Fact]
-        public void Check_Required_Select()
+        public void Check_Required_Name()
         {
-            // Arrange
-            var query = new Query<object>(null)
-                .AddField("something");
-
-            // Assert
-            Assert.Throws<ArgumentException>(() => query.Build());
+            Assert.Throws<ArgumentNullException>(() => new Query<object>(null));
         }
 
         [Fact]
-        public void Check_Required_Name()
+        public void Check_Required_Select()
         {
             // Arrange
             var query = new Query<object>("something");

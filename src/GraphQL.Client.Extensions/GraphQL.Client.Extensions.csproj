@@ -12,6 +12,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Dawn.Guard" Version="1.10.0" />
     <PackageReference Include="GraphQL.Client" Version="1.0.3" />
   </ItemGroup>
 </Project>
