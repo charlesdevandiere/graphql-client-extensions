@@ -24,7 +24,7 @@ steps:
     displayName: GitVersion
 
   - task: UseDotNet@2
-    displayName: 'Use .NET Core SDK 3.1'
+    displayName: "use dotnet core sdk 3.1"
     inputs:
       packageType: sdk
       version: 3.1.100
@@ -33,14 +33,14 @@ steps:
   - script: dotnet tool restore
     displayName: "dotnet tool restore"
 
-  - script: dotnet pack .\src\GraphQL.Client.Extensions\GraphQL.Client.Extensions.csproj -c $(buildConfiguration) -o $(Build.ArtifactStagingDirectory)\out -p:Version=$(GitVersion.SemVer) --include-symbols
-    displayName: "dotnet pack"
-
   - script: dotnet test -c $(buildConfiguration) --logger xunit -p:CollectCoverage=true -p:CoverletOutputFormat=cobertura -p:Exclude="[*]Shared.Models.*"
     displayName: "dotnet test"
 
+  - script: dotnet pack .\src\GraphQL.Client.Extensions\GraphQL.Client.Extensions.csproj -c $(buildConfiguration) -o $(Build.ArtifactStagingDirectory)\out -p:Version=$(GitVersion.SemVer) --include-symbols
+    displayName: "dotnet pack"
+
   - task: PublishTestResults@2
-    displayName: "Publish test results"
+    displayName: "publish test results"
     inputs:
       testRunner: xUnit
       testResultsFiles: "**/TestResults.xml"
@@ -49,13 +49,14 @@ steps:
     displayName: "Generate code coverage report"
 
   - task: PublishCodeCoverageResults@1
+    displayName: "publish code coverage"
     inputs:
       codeCoverageTool: cobertura
       summaryFileLocation: "**/Cobertura.xml"
 
   - task: PublishBuildArtifacts@1
-    displayName: "Publish artifact"
-    condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
+    displayName: "publish artifact"
+    condition: and(succeeded(), ne(variables["Build.Reason"], "PullRequest"))
     inputs:
       PathtoPublish: $(Build.ArtifactStagingDirectory)\out
       ArtifactName: out
