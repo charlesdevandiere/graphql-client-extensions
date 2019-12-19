@@ -1,8 +1,8 @@
-using Newtonsoft.Json;
 using System;
 using System.Text;
+using Newtonsoft.Json;
 
-namespace Pokedex
+namespace Shared.Models
 {
     public class Pokemon
     {
@@ -47,7 +47,6 @@ namespace Pokedex
             {
                 sb.AppendLine(this.Attacks.ToString());
             }
-            sb.AppendLine();
 
             return sb.ToString();
         }

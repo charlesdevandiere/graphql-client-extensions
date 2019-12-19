@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using GraphQL.Client;
+using Dawn;
 using GraphQL.Common.Request;
 using GraphQL.Common.Response;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace GraphQL.Client.Extensions
@@ -16,131 +15,133 @@ namespace GraphQL.Client.Extensions
     /// </summary>
     public static class GraphQLClientExtensions
     {
-        /// <summary>
-        /// Given a type return the results of a GraphQL query in it. If
-        /// the type is a string then will return the JSON string. The resultName
-        /// will be automatically set the Name or Alias name if not specified.
-        /// For Raw queries you must set the resultName param OR set the Name() in
-        /// the query to match. This handles server connection here!
-        /// </summary>
-        /// <typeparam name="T">Data Type, typically a list of the record but not always.</typeparam>
-        /// <param name="gqlClient"></param>
-        /// <param name="query"></param>
-        /// <param name="resultName">Override of the Name/Alias of the query</param>
-        /// <param name="cancellationToken">Cancellation token</param>
-        /// <returns>The type of object stuffed with data from the query</returns>
+        /// <summary>Send a <see cref="GraphQLRequest" /> via GET.</summary>
+        /// <typeparam name="T">Data Type.</typeparam>
+        /// <param name="client">The GraphQL Client.</param>
+        /// <param name="query">The query.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
         /// <exception cref="ArgumentException">Dupe Key, missing parts or empty parts of a query</exception>
         /// <exception cref="ArgumentNullException">Invalid Configuration</exception>
-        public static async Task<T> Get<T>(this GraphQLClient gqlClient, IQuery query, string resultName = null, CancellationToken cancellationToken = default)
+        public static async Task<T> Get<T>(this GraphQLClient client, IQuery query, CancellationToken cancellationToken = default)
             where T : class
         {
-            GraphQLRequest gqlQuery = CreateGraphQLResquest(query);
+            Guard.Argument(query, nameof(query)).NotNull();
 
-            // make the call to the server, this will toss on any non 200 response
+            GraphQLRequest request = CreateGraphQLResquest(query);
+            GraphQLResponse response = await client.GetAsync(request, cancellationToken);
 
-            GraphQLResponse gqlResp = await gqlClient.GetAsync(gqlQuery, cancellationToken);
-
-            return ParseResponse<T>(query, ref resultName, gqlQuery, gqlResp);
+            return ParseResponse<T>(query, response);
         }
 
-        /// <summary>
-        /// Given a type return the results of a GraphQL query in it. If
-        /// the type is a string then will return the JSON string. The resultName
-        /// will be automatically set the Name or Alias name if not specified.
-        /// For Raw queries you must set the resultName param OR set the Name() in
-        /// the query to match. This handles server connection here!
-        /// </summary>
-        /// <typeparam name="T">Data Type, typically a list of the record but not always.
-        /// </typeparam>
-        /// <param name="gqlClient"></param>
-        /// <param name="query"></param>
-        /// <param name="resultName">Override of the Name/Alias of the query</param>
-        /// <param name="cancellationToken">Cancellation token</param>
-        /// <returns>The type of object stuffed with data from the query</returns>
+        /// <summary>Send a <see cref="GraphQLRequest" /> composed of a query batch via GET.</summary>
+        /// <param name="client">The GraphQL Client.</param>
+        /// <param name="queries">The query batch.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
         /// <exception cref="ArgumentException">Dupe Key, missing parts or empty parts of a query</exception>
         /// <exception cref="ArgumentNullException">Invalid Configuration</exception>
-        public static async Task<T> Post<T>(this GraphQLClient gqlClient, IQuery query, string resultName = null, CancellationToken cancellationToken = default)
-            where T : class
+        public static async Task<IReadOnlyDictionary<string, JToken>> GetBatch(this GraphQLClient client, IQuery[] queries, CancellationToken cancellationToken = default)
         {
-            GraphQLRequest gqlQuery = CreateGraphQLResquest(query);
+            Guard.Argument(queries, nameof(queries)).NotNull().NotEmpty();
 
-            // make the call to the server, this will toss on any non 200 response
+            GraphQLRequest request = CreateGraphQLResquest(queries);
+            GraphQLResponse response = await client.GetAsync(request, cancellationToken);
 
-            GraphQLResponse gqlResp = await gqlClient.PostAsync(gqlQuery, cancellationToken);
-
-            return ParseResponse<T>(query, ref resultName, gqlQuery, gqlResp);
+            return ParseResponse(queries, response);
         }
 
-        private static T ParseResponse<T>(IQuery query, ref string resultName, GraphQLRequest gqlQuery, GraphQLResponse gqlResp)
+        /// <summary>Send a <see cref="GraphQLRequest" /> via POST.</summary>
+        /// <typeparam name="T">Data Type.</typeparam>
+        /// <param name="client">The GraphQL Client.</param>
+        /// <param name="query">The query.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <exception cref="ArgumentException">Dupe Key, missing parts or empty parts of a query</exception>
+        /// <exception cref="ArgumentNullException">Invalid Configuration</exception>
+        public static async Task<T> Post<T>(this GraphQLClient client, IQuery query, CancellationToken cancellationToken = default)
             where T : class
         {
-            // check for no results, this is an odd case but should be caught
+            Guard.Argument(query, nameof(query)).NotNull();
 
-            // Any mising/empty data or response errors (GQL) will cause an exception!
-            //
-            // NOTE: GQL can return VALID data for a partial set of queries and errors
-            // for others all in the same response set. Our case here is that ANY errors cause
-            // a report of failure.
+            GraphQLRequest request = CreateGraphQLResquest(query);
+            GraphQLResponse response = await client.PostAsync(request, cancellationToken);
 
-            CheckResult(gqlQuery, gqlResp);
+            return ParseResponse<T>(query, response);
+        }
 
-            // If the given type was a string, ship the raw JSON string
+        /// <summary>Send a <see cref="GraphQLRequest" /> composed of a query batch via POST.</summary>
+        /// <param name="client">The GraphQL Client.</param>
+        /// <param name="queries">The query batch.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <exception cref="ArgumentException">Dupe Key, missing parts or empty parts of a query</exception>
+        /// <exception cref="ArgumentNullException">Invalid Configuration</exception>
+        public static async Task<IReadOnlyDictionary<string, JToken>> PostBatch(this GraphQLClient client, IQuery[] queries, CancellationToken cancellationToken = default)
+        {
+            Guard.Argument(queries, nameof(queries)).NotNull().NotEmpty();
+
+            GraphQLRequest request = CreateGraphQLResquest(queries);
+            GraphQLResponse response = await client.PostAsync(request, cancellationToken);
+
+            return ParseResponse(queries, response);
+        }
+
+        private static T ParseResponse<T>(IQuery query, GraphQLResponse response)
+            where T : class
+        {
+            Guard.Argument(query, nameof(query)).NotNull();
+            Guard.Argument(response, nameof(response)).NotNull();
+
+            CheckResponse(response);
+
+            string resultName = string.IsNullOrWhiteSpace(query.AliasName) ? query.Name : query.AliasName;
+
+            JToken value = response.Data.GetValue(resultName);
 
             if (typeof(T) == typeof(string))
             {
-                return gqlResp.Data.ToString();
+                return value.ToString() as T;
             }
 
-            // If the smart user passes in a JObject, get it that way instead of fixed T type
-            // Your (T) must match the structure of the JSON being returned or expect an exception
-
-            if (typeof(T) == typeof(JObject))
+            if (typeof(T) == typeof(JToken))
             {
-                return JsonConvert.DeserializeObject<JObject>(gqlResp.Data.ToString());
+                return value as T;
             }
 
-            // Now we need to get the results name. This is EITHER the Name, or the Alias
-            // name. If Alias was set then use it. If the user does specify it in
-            // the Get call it's an override. This might be needed with raw query
-
-            if (resultName == null)
-            {
-                resultName = string.IsNullOrWhiteSpace(query.AliasName) ? query.Name : query.AliasName;
-            }
-
-            // Let the client do the mapping , all sorts of things can throw at this point!
-            // caller should check for exceptions, Generally invalid mapping into the type
-
-            return gqlResp.GetDataFieldAs<T>(resultName);
+            return value.ToObject<T>();
         }
 
-        private static void CheckResult(GraphQLRequest request, GraphQLResponse response)
+        private static IReadOnlyDictionary<string, JToken> ParseResponse(IQuery[] queries, GraphQLResponse response)
         {
-            if (response?.Data == null || response?.Errors != null)
+            Guard.Argument(queries, nameof(queries)).NotNull().NotEmpty();
+            Guard.Argument(response, nameof(response)).NotNull();
+
+            CheckResponse(response);
+
+            var result = new Dictionary<string, JToken>();
+
+            foreach (IQuery query in queries)
             {
-                string errorMessage = "The GraphQL request return errors.";
-                var errorData = new Dictionary<object, object>();
-                errorData.Add("request", request.ToString());
+                string resultName = string.IsNullOrWhiteSpace(query.AliasName) ? query.Name : query.AliasName;
+                JToken value = response.Data.GetValue(resultName);
+                result.Add(resultName, value);
+            }
 
-                if (response?.Errors != null && response.Errors.Length > 0)
-                {
-                    errorMessage += string.Join(" ", response.Errors.Select(error => error.Message));
-                    errorData.Add("errors", response.Errors);
-                }
+            return result;
+        }
 
-                Exception exception = new Exception(errorMessage);
-                foreach (KeyValuePair<object, object> data in errorData)
-                {
-                    exception.Data.Add(data.Key, data.Value);
-                }
+        private static void CheckResponse(GraphQLResponse response)
+        {
+            Guard.Argument(response, nameof(response)).NotNull();
 
-                throw exception;
+            if (response.Errors != null)
+            {
+                throw new GraphQLClientException(response.Errors);
             }
         }
 
-        private static GraphQLRequest CreateGraphQLResquest(IQuery query)
+        private static GraphQLRequest CreateGraphQLResquest(params IQuery[] queries)
         {
-            return new GraphQLRequest { Query = "{" + query.Build() + "}" };
+            Guard.Argument(queries, nameof(queries)).NotNull().NotEmpty();
+
+            return new GraphQLRequest { Query = "{" + string.Concat(queries.Select(q => q.Build())) + "}" };
         }
     }
 }

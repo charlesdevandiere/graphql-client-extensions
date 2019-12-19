@@ -7,8 +7,8 @@ namespace GraphQL.Client.Extensions.UnitTests.Models
         [JsonProperty("name")]
         public string Name { get; set; }
 
-        [JsonProperty("weelsNumber")]
-        public int WeelsNumber { get; set; }
+        [JsonProperty("wheelsNumber")]
+        public int WheelsNumber { get; set; }
 
         [JsonProperty("load")]
         public Load Load { get; set; }

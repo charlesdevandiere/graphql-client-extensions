@@ -1,10 +1,9 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using System.Text;
+using Dawn;
 using Newtonsoft.Json;
 
 [assembly: InternalsVisibleTo("GraphQL.Client.Extensions.UnitTests")]
@@ -50,6 +49,8 @@ namespace GraphQL.Client.Extensions
         /// </summary>
         public Query(string name)
         {
+            Guard.Argument(name, nameof(name)).NotNull().NotEmpty();
+
             this.Name = name;
         }
 
@@ -58,6 +59,8 @@ namespace GraphQL.Client.Extensions
         /// </summary>
         public Query(string name, QueryOptions options)
         {
+            Guard.Argument(name, nameof(name)).NotNull().NotEmpty();
+
             this.Name = name;
             this.options = options;
             if (options?.QueryStringBuilderFactory != null)
@@ -73,6 +76,8 @@ namespace GraphQL.Client.Extensions
         /// <returns>IQuery{TSource}</returns>
         public IQuery<TSource> Alias(string alias)
         {
+            Guard.Argument(alias, nameof(alias)).NotNull().NotEmpty();
+
             this.AliasName = alias;
 
             return this;
@@ -86,10 +91,7 @@ namespace GraphQL.Client.Extensions
         /// <returns>IQuery{TSource}</returns>
         public IQuery<TSource> AddField<TProperty>(Expression<Func<TSource, TProperty>> selector)
         {
-            if (selector == null)
-            {
-                throw new ArgumentNullException(nameof(selector));
-            }
+            Guard.Argument(selector, nameof(selector)).NotNull();
 
             PropertyInfo property = GetPropertyInfo(selector);
             string name = GetPropertyName(property);
@@ -106,6 +108,8 @@ namespace GraphQL.Client.Extensions
         /// <returns>IQuery{TSource}</returns>
         public IQuery<TSource> AddField(string field)
         {
+            Guard.Argument(field, nameof(field)).NotNull().NotEmpty();
+
             this.SelectList.Add(field);
 
             return this;
@@ -123,14 +127,8 @@ namespace GraphQL.Client.Extensions
             Func<IQuery<TSubSource>, IQuery<TSubSource>> build)
             where TSubSource : class
         {
-            if (selector == null)
-            {
-                throw new ArgumentNullException(nameof(selector));
-            }
-            if (build == null)
-            {
-                throw new ArgumentNullException(nameof(build));
-            }
+            Guard.Argument(selector, nameof(selector)).NotNull();
+            Guard.Argument(build, nameof(build)).NotNull();
 
             PropertyInfo property = GetPropertyInfo(selector);
             string name = GetPropertyName(property);
@@ -150,14 +148,8 @@ namespace GraphQL.Client.Extensions
             Func<IQuery<TSubSource>, IQuery<TSubSource>> build)
             where TSubSource : class
         {
-            if (selector == null)
-            {
-                throw new ArgumentNullException(nameof(selector));
-            }
-            if (build == null)
-            {
-                throw new ArgumentNullException(nameof(build));
-            }
+            Guard.Argument(selector, nameof(selector)).NotNull();
+            Guard.Argument(build, nameof(build)).NotNull();
 
             PropertyInfo property = GetPropertyInfo(selector);
             string name = GetPropertyName(property);
@@ -177,14 +169,8 @@ namespace GraphQL.Client.Extensions
             Func<IQuery<TSubSource>, IQuery<TSubSource>> build)
             where TSubSource : class
         {
-            if (string.IsNullOrWhiteSpace(field))
-            {
-                throw new ArgumentNullException(nameof(field));
-            }
-            if (build == null)
-            {
-                throw new ArgumentNullException(nameof(build));
-            }
+            Guard.Argument(field, nameof(field)).NotNull().NotEmpty();
+            Guard.Argument(build, nameof(build)).NotNull();
 
             var query = new Query<TSubSource>(field, this.options);
             IQuery<TSubSource> subQuery = build.Invoke(query);
@@ -202,6 +188,8 @@ namespace GraphQL.Client.Extensions
         /// <returns>IQuery{TSource}</returns>
         public IQuery<TSource> AddArgument(string key, object value)
         {
+            Guard.Argument(key, nameof(key)).NotNull().NotEmpty();
+
             this.ArgumentsMap.Add(key, value);
 
             return this;
@@ -214,6 +202,8 @@ namespace GraphQL.Client.Extensions
         /// <returns>IQuery{TSource}</returns>
         public IQuery<TSource> AddArguments(Dictionary<string, object> arguments)
         {
+            Guard.Argument(arguments, nameof(arguments)).NotNull();
+
             foreach (KeyValuePair<string, object> argument in arguments)
             {
                 this.ArgumentsMap.Add(argument.Key, argument.Value);
@@ -222,14 +212,16 @@ namespace GraphQL.Client.Extensions
             return this;
         }
 
-        /// <sumary>
+        /// <summary>
         /// Adds arguments to the query.
-        /// </sumary>
+        /// </summary>
         /// <typeparam name="TArguments">Arguments object type</typeparam>
         /// <param name="arguments">Arguments object</param>
         /// <returns>IQuery{TSource}</returns>
         public IQuery<TSource> AddArguments<TArguments>(TArguments arguments) where TArguments : class
         {
+            Guard.Argument(arguments, nameof(arguments)).NotNull();
+
             PropertyInfo[] properties = typeof(TArguments).GetProperties();
             foreach (PropertyInfo property in properties)
             {
@@ -247,10 +239,6 @@ namespace GraphQL.Client.Extensions
         /// <exception cref="ArgumentException">Must have a one or more 'Select' fields in the Query</exception>
         public string Build()
         {
-            if (string.IsNullOrWhiteSpace(this.Name))
-            {
-                throw new ArgumentException("Must have a 'Name' specified in the Query");
-            }
             if (SelectList.Count == 0)
             {
                 throw new ArgumentException("Must have a one or more 'Select' fields in the Query");
@@ -263,10 +251,7 @@ namespace GraphQL.Client.Extensions
 
         private static PropertyInfo GetPropertyInfo<TProperty>(Expression<Func<TSource, TProperty>> lambda)
         {
-            if (lambda == null)
-            {
-                throw new ArgumentNullException(nameof(lambda));
-            }
+            Guard.Argument(lambda, nameof(lambda)).NotNull();
 
             MemberExpression member = lambda.Body as MemberExpression;
             if (member == null)
@@ -296,10 +281,7 @@ namespace GraphQL.Client.Extensions
         /// <returns>String</returns>
         private string GetPropertyName(PropertyInfo property)
         {
-            if (property == null)
-            {
-                throw new ArgumentNullException(nameof(property));
-            }
+            Guard.Argument(property, nameof(property)).NotNull();
 
             Attribute attribute = property.GetCustomAttribute(typeof(JsonPropertyAttribute));
 

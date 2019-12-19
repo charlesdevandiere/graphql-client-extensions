@@ -2,15 +2,13 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using NSubstitute;
+using Xunit;
 
 namespace GraphQL.Client.Extensions.UnitTests
 {
-    [TestClass]
     public class QueryTests
     {
-        [TestMethod]
+        [Fact]
         public void Select_StringList_AddsToQuery()
         {
             // Arrange
@@ -29,10 +27,10 @@ namespace GraphQL.Client.Extensions.UnitTests
             }
 
             // Assert
-            CollectionAssert.AreEqual(selectList, query.SelectList);
+            Assert.Equal(selectList, query.SelectList);
         }
 
-        [TestMethod]
+        [Fact]
         public void From_String_AddsToQuery()
         {
             // Arrange
@@ -41,10 +39,10 @@ namespace GraphQL.Client.Extensions.UnitTests
             var query = new Query<object>(name);
 
             // Assert
-            Assert.AreEqual(name, query.Name);
+            Assert.Equal(name, query.Name);
         }
 
-        [TestMethod]
+        [Fact]
         public void Select_String_AddsToQuery()
         {
             // Arrange
@@ -56,10 +54,10 @@ namespace GraphQL.Client.Extensions.UnitTests
             query.AddField(select);
 
             // Assert
-            Assert.AreEqual(select, query.SelectList.First());
+            Assert.Equal(select, query.SelectList.First());
         }
 
-        [TestMethod]
+        [Fact]
         public void Select_DynamicArguments_AddsToQuery()
         {
             // Arrange
@@ -75,10 +73,10 @@ namespace GraphQL.Client.Extensions.UnitTests
                 "thing",
                 "else"
             };
-            CollectionAssert.AreEqual(shouldEqual, query.SelectList);
+            Assert.Equal(shouldEqual, query.SelectList);
         }
 
-        [TestMethod]
+        [Fact]
         public void Select_ArrayOfString_AddsToQuery()
         {
             // Arrange
@@ -102,10 +100,10 @@ namespace GraphQL.Client.Extensions.UnitTests
                 "id",
                 "name"
             };
-            CollectionAssert.AreEqual(shouldEqual, query.SelectList);
+            Assert.Equal(shouldEqual, query.SelectList);
         }
 
-        [TestMethod]
+        [Fact]
         public void Select_ChainCombinationOfStringAndList_AddsToQuery()
         {
             // Arrange
@@ -147,10 +145,10 @@ namespace GraphQL.Client.Extensions.UnitTests
                 "array",
                 "cool"
             };
-            CollectionAssert.AreEqual(shouldEqual, query.SelectList);
+            Assert.Equal(shouldEqual, query.SelectList);
         }
 
-        [TestMethod]
+        [Fact]
         public void Where_IntegerArgumentWhere_AddsToWhere()
         {
             // Arrange
@@ -160,10 +158,10 @@ namespace GraphQL.Client.Extensions.UnitTests
             query.AddArgument("id", 1);
 
             // Assert
-            Assert.AreEqual(1, query.ArgumentsMap["id"]);
+            Assert.Equal(1, query.ArgumentsMap["id"]);
         }
 
-        [TestMethod]
+        [Fact]
         public void Where_StringArgumentWhere_AddsToWhere()
         {
             // Arrange
@@ -173,10 +171,10 @@ namespace GraphQL.Client.Extensions.UnitTests
             query.AddArgument("name", "danny");
 
             // Assert
-            Assert.AreEqual("danny", query.ArgumentsMap["name"]);
+            Assert.Equal("danny", query.ArgumentsMap["name"]);
         }
 
-        [TestMethod]
+        [Fact]
         public void Where_DictionaryArgumentWhere_AddsToWhere()
         {
             // Arrange
@@ -193,12 +191,12 @@ namespace GraphQL.Client.Extensions.UnitTests
 
             // Assert
             Dictionary<string, int> queryWhere = (Dictionary<string, int>) query.ArgumentsMap["price"];
-            Assert.AreEqual(1, queryWhere["from"]);
-            Assert.AreEqual(100, queryWhere["to"]);
-            CollectionAssert.AreEqual(dict, (ICollection) query.ArgumentsMap["price"]);
+            Assert.Equal(1, queryWhere["from"]);
+            Assert.Equal(100, queryWhere["to"]);
+            Assert.Equal(dict, (ICollection) query.ArgumentsMap["price"]);
         }
 
-        [TestMethod]
+        [Fact]
         public void Where_ChainedWhere_AddsToWhere()
         {
             // Arrange
@@ -223,28 +221,23 @@ namespace GraphQL.Client.Extensions.UnitTests
                 {"name", "danny"},
                 {"price", dict}
             };
-            CollectionAssert.AreEqual(shouldPass, query.ArgumentsMap);
+            Assert.Equal(shouldPass, query.ArgumentsMap);
         }
 
-        [TestMethod]
-        public void Check_Required_Select()
-        {
-            // Arrange
-            var query = new Query<object>(null)
-                .AddField("something");
-
-            // Assert
-            Assert.ThrowsException<ArgumentException>(() => query.Build());
-        }
-
-        [TestMethod]
+        [Fact]
         public void Check_Required_Name()
+        {
+            Assert.Throws<ArgumentNullException>(() => new Query<object>(null));
+        }
+
+        [Fact]
+        public void Check_Required_Select()
         {
             // Arrange
             var query = new Query<object>("something");
 
             // Assert
-            Assert.ThrowsException<ArgumentException>(() => query.Build());
+            Assert.Throws<ArgumentException>(() => query.Build());
         }
     }
 }
