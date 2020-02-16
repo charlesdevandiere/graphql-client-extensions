@@ -40,8 +40,6 @@ namespace GraphQL.Client.Extensions
         /// <exception cref="InvalidDataException">Invalid Object Type in Param List</exception>
         internal protected string BuildQueryParam(object value)
         {
-            // Nicely use the pattern match
-
             switch (value)
             {
                 case string strValue:
@@ -214,13 +212,16 @@ namespace GraphQL.Client.Extensions
                 QueryString.Append(")");
             }
 
-            // now build the Field list
-
-            QueryString.Append("{");
-
-            AddFields(query);
-
-            QueryString.Append("}");
+            if (query.SelectList.Count > 0)
+            {
+                QueryString.Append("{");
+                AddFields(query);
+                QueryString.Append("}");
+            }
+            else
+            {
+                AddFields(query);
+            }
 
             return QueryString.ToString();
         }

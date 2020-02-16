@@ -324,5 +324,18 @@ namespace GraphQL.Client.Extensions.UnitTests
             // Assert
             Assert.Equal(RemoveWhitespace("test1Alias:test1{morethingsin_a_selectsubSelect(subMake:\"aston martin\",subState:\"ca\",subLimit:1,__debug:DISABLED,SuperQuerySpeed:ENABLED){subNamesubMakesubModel}}"), buildStr);
         }
+
+        [Fact]
+        public void QueryWithoutField()
+        {
+            // Arrange
+            var query = new Query<object>("test");
+
+            // Act
+            string buildStr = query.Build();
+
+            // Assert
+            Assert.Equal(RemoveWhitespace("test"), buildStr);
+        }
     }
 }

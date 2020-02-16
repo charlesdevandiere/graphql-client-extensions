@@ -158,6 +158,7 @@ namespace GraphQL.Client.Extensions.UnitTests
             public IQueryable<SubObject> IQueryable { get; set; }
             public SubObject[] Array { get; set; }
         }
+
         class SubObject
         {
             public byte Id { get; set; }
