@@ -239,11 +239,6 @@ namespace GraphQL.Client.Extensions
         /// <exception cref="ArgumentException">Must have a one or more 'Select' fields in the Query</exception>
         public string Build()
         {
-            if (SelectList.Count == 0)
-            {
-                throw new ArgumentException("Must have a one or more 'Select' fields in the Query");
-            }
-
             this.QueryStringBuilder.Clear();
 
             return this.QueryStringBuilder.Build(this);
