@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using GraphQL.Client.Extensions.UnitTests.Models;
 using System.Linq;
 using Xunit;
@@ -120,6 +120,23 @@ namespace GraphQL.Client.Extensions.UnitTests
         }
 
         [Fact]
+        public void TestQueryWithSubQueryOnScalar()
+        {
+            var query = new Query<Truck>("truck")
+                .AddArguments(new { id = "yk8h4vn0" })
+                .AddField(
+                    truck => truck.SpeedLimits,
+                    sq => sq
+                        .AddArgument("match", "1"),
+                    true
+                    );
+
+            string result = query.Build();
+
+            Assert.Equal("truck(id:\"yk8h4vn0\"){speedLimits(match:\"1\")}", result);
+        }
+
+        [Fact]
         public void TestQueryBuild()
         {
             var query = new Query<Truck>("truck")
@@ -129,12 +146,20 @@ namespace GraphQL.Client.Extensions.UnitTests
                 .AddField(
                     truck => truck.Load,
                     sq => sq
-                        .AddField(load => load.Weight));
+                        .AddField(load => load.Weight))
+                .AddField(
+                    truck => truck.SpeedLimits,
+                    sq => sq
+                        .AddArgument("match","1"),
+                    true
+                    );
 
             string result = query.Build();
 
-            Assert.Equal("truck(id:\"yk8h4vn0\",km:2100,imported:true){name wheelsNumber load{weight}}", result);
+            Assert.Equal("truck(id:\"yk8h4vn0\",km:2100,imported:true){name wheelsNumber load{weight} speedLimits(match:\"1\")}", result);
         }
+
+
 
         [Fact]
         public void TestSubSelectWithList()

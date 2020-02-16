@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -35,10 +35,15 @@ namespace GraphQL.Client.Extensions
         public string Name { get; private set; }
 
         /// <summary>
+        /// Gets the SourceScalar flag value.   
+        /// </summary>
+        public bool IsSourceScalar { get; private set; } = false;
+
+        /// <summary>
         /// Gets the alias name.
         /// </summary>
         public string AliasName { get; private set; }
-        
+
         /// <summary>
         /// Gets the query string builder.
         /// </summary>
@@ -47,21 +52,23 @@ namespace GraphQL.Client.Extensions
         /// <summary>
         /// Initializes a new instance of the <see cref="Query{TSource}" /> class.
         /// </summary>
-        public Query(string name)
+        public Query(string name, bool isSourceScalar = false)
         {
             Guard.Argument(name, nameof(name)).NotNull().NotEmpty();
 
             this.Name = name;
+            this.IsSourceScalar = isSourceScalar;
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Query{TSource}" /> class.
         /// </summary>
-        public Query(string name, QueryOptions options)
+        public Query(string name, QueryOptions options, bool isSourceScalar = false)
         {
             Guard.Argument(name, nameof(name)).NotNull().NotEmpty();
 
             this.Name = name;
+            this.IsSourceScalar = isSourceScalar;
             this.options = options;
             if (options?.QueryStringBuilderFactory != null)
             {
@@ -124,7 +131,8 @@ namespace GraphQL.Client.Extensions
         /// <returns>IQuery{TSource}</returns>
         public IQuery<TSource> AddField<TSubSource>(
             Expression<Func<TSource, TSubSource>> selector,
-            Func<IQuery<TSubSource>, IQuery<TSubSource>> build)
+            Func<IQuery<TSubSource>, IQuery<TSubSource>> build,
+            bool customScalarType = false)
             where TSubSource : class
         {
             Guard.Argument(selector, nameof(selector)).NotNull();
@@ -133,7 +141,9 @@ namespace GraphQL.Client.Extensions
             PropertyInfo property = GetPropertyInfo(selector);
             string name = GetPropertyName(property);
 
-            return AddField(name, build);
+            bool isSourceScalar = customScalarType ? true : this.IsTypeScalar(property.PropertyType);
+
+            return AddField(name, build, customScalarType);
         }
 
         /// <summary>
@@ -145,7 +155,8 @@ namespace GraphQL.Client.Extensions
         /// <returns>IQuery{TSource}</returns>
         public IQuery<TSource> AddField<TSubSource>(
             Expression<Func<TSource, IEnumerable<TSubSource>>> selector,
-            Func<IQuery<TSubSource>, IQuery<TSubSource>> build)
+            Func<IQuery<TSubSource>, IQuery<TSubSource>> build,
+            bool customScalarType = false)
             where TSubSource : class
         {
             Guard.Argument(selector, nameof(selector)).NotNull();
@@ -154,7 +165,9 @@ namespace GraphQL.Client.Extensions
             PropertyInfo property = GetPropertyInfo(selector);
             string name = GetPropertyName(property);
 
-            return AddField(name, build);
+            bool isSourceScalar = customScalarType ? true : this.IsTypeScalar(property.PropertyType);
+
+            return AddField(name, build, isSourceScalar);
         }
 
         /// <summary>
@@ -163,16 +176,20 @@ namespace GraphQL.Client.Extensions
         /// <typeparam name="TSubSource">Sub-object type</typeparam>
         /// <param name="field">Field name</param>
         /// <param name="build">Sub-object query building function</param>
+        /// <param name="customScalarType">Is the field a custom scalar type</param>
         /// <returns>IQuery{TSource}</returns>
         public IQuery<TSource> AddField<TSubSource>(
             string field,
-            Func<IQuery<TSubSource>, IQuery<TSubSource>> build)
+            Func<IQuery<TSubSource>, IQuery<TSubSource>> build,
+            bool customScalarType = false)
             where TSubSource : class
         {
             Guard.Argument(field, nameof(field)).NotNull().NotEmpty();
             Guard.Argument(build, nameof(build)).NotNull();
 
-            var query = new Query<TSubSource>(field, this.options);
+            bool isSourceScalar = customScalarType ? true : this.IsTypeScalar(field);
+
+            var query = new Query<TSubSource>(field, this.options, isSourceScalar);
             IQuery<TSubSource> subQuery = build.Invoke(query);
 
             this.SelectList.Add(subQuery);
@@ -239,7 +256,7 @@ namespace GraphQL.Client.Extensions
         /// <exception cref="ArgumentException">Must have a one or more 'Select' fields in the Query</exception>
         public string Build()
         {
-            if (SelectList.Count == 0)
+            if (!this.IsSourceScalar && this.SelectList.Count == 0)
             {
                 throw new ArgumentException("Must have a one or more 'Select' fields in the Query");
             }
@@ -299,6 +316,33 @@ namespace GraphQL.Client.Extensions
             }
 
             return property.Name;
+        }
+
+        /// <summary>
+        /// Tries to assert if the type is a default graphQL scalar type.
+        /// </summary>
+        /// <param name="name">Name of type</param>
+        /// <returns>Bool</returns>
+        private bool IsTypeScalar(string name)
+        {
+            Guard.Argument(name, nameof(name)).NotNull().NotEmpty();
+
+            var type = Type.GetType(name);
+            if (type == null) {
+                return false;
+            }
+            return this.IsTypeScalar(type);
+        }
+        
+        /// <summary>
+        /// Tries to assert if the type is a default graphQL scalar type.
+        /// </summary>
+        /// <param name="type">Type</param>
+        /// <returns>Bool</returns>
+        private bool IsTypeScalar(Type type)
+        {
+            Guard.Argument(type, nameof(type)).NotNull();
+            return type == typeof(string) || type == typeof(int) || type == typeof(float) || type == typeof(bool);
         }
     }
 }

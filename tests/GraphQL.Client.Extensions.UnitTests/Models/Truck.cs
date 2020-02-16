@@ -1,4 +1,4 @@
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
 namespace GraphQL.Client.Extensions.UnitTests.Models
 {
@@ -12,5 +12,8 @@ namespace GraphQL.Client.Extensions.UnitTests.Models
 
         [JsonProperty("load")]
         public Load Load { get; set; }
+
+        [JsonProperty("speedLimits")]
+        public int[] SpeedLimits { get; set; }
     }
 }

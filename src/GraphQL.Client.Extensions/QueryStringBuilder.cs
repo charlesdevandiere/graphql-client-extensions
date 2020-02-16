@@ -214,13 +214,16 @@ namespace GraphQL.Client.Extensions
                 QueryString.Append(")");
             }
 
-            // now build the Field list
+            // now build the Field list if needed
+            if (!query.IsSourceScalar)
+            {
 
-            QueryString.Append("{");
+                QueryString.Append("{");
 
-            AddFields(query);
+                AddFields(query);
 
-            QueryString.Append("}");
+                QueryString.Append("}");
+            }
 
             return QueryString.ToString();
         }

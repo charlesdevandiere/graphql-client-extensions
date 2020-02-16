@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 
@@ -18,6 +18,11 @@ namespace GraphQL.Client.Extensions
         /// Gets the arguments map.
         /// </summary>
         Dictionary<string, object> ArgumentsMap { get; }
+
+        /// <summary>
+        /// Gets the SourceScalar flag value.   
+        /// </summary>
+        public bool IsSourceScalar { get; }
 
         /// <summary>
         /// Sets the query alias name.
@@ -47,10 +52,12 @@ namespace GraphQL.Client.Extensions
         /// <typeparam name="TSubSource">Sub-object type</typeparam>
         /// <param name="selector">Field selector</param>
         /// <param name="build">Sub-object query building function</param>
+        /// <param name="customScalarType">Flag property as scalar, false by default</param>
         /// <returns>IQuery{TSource}</returns>
         IQuery<TSource> AddField<TSubSource>(
             Expression<Func<TSource, TSubSource>> selector,
-            Func<IQuery<TSubSource>, IQuery<TSubSource>> build)
+            Func<IQuery<TSubSource>, IQuery<TSubSource>> build,
+            bool customScalarType = false)
             where TSubSource : class;
 
         /// <summary>
@@ -59,10 +66,12 @@ namespace GraphQL.Client.Extensions
         /// <typeparam name="TSubSource">Sub-list object type</typeparam>
         /// <param name="selector">Field selector</param>
         /// <param name="build">Sub-object query building function</param>
+        /// <param name="customScalarType">Flag property as scalar, false by default</param>
         /// <returns>IQuery{TSource}</returns>
         IQuery<TSource> AddField<TSubSource>(
             Expression<Func<TSource, IEnumerable<TSubSource>>> selector,
-            Func<IQuery<TSubSource>, IQuery<TSubSource>> build)
+            Func<IQuery<TSubSource>, IQuery<TSubSource>> build,
+            bool customScalarType = false)
             where TSubSource : class;
 
         /// <summary>
@@ -71,10 +80,12 @@ namespace GraphQL.Client.Extensions
         /// <typeparam name="TSubSource">Sub-object type</typeparam>
         /// <param name="field">Field name</param>
         /// <param name="build">Sub-object query building function</param>
+        /// <param name="customScalarType">Flag property as scalar, false by default</param>
         /// <returns>IQuery{TSource}</returns>
         IQuery<TSource> AddField<TSubSource>(
             string field,
-            Func<IQuery<TSubSource>, IQuery<TSubSource>> build)
+            Func<IQuery<TSubSource>, IQuery<TSubSource>> build,
+            bool customScalarType = false)
             where TSubSource : class;
 
         /// <summary>
