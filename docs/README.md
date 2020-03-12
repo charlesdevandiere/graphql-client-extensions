@@ -9,6 +9,8 @@ Extensions for [GraphQL.Client](https://github.com/graphql-dotnet/graphql-client
 [![Nuget](https://img.shields.io/nuget/v/GraphQL.Client.Extensions.svg?color=blue&logo=nuget)](https://www.nuget.org/packages/GraphQL.Client.Extensions)
 [![Downloads](https://img.shields.io/nuget/dt/GraphQL.Client.Extensions.svg?logo=nuget)](https://www.nuget.org/packages/GraphQL.Client.Extensions)
 
+Uses [GraphQL.Query.Builder](https://github.com/charlesdevandiere/graphql-query-builder-dotnet) for query building.
+
 ## Install
 
 Run this command with dotnet CLI:
@@ -19,7 +21,7 @@ Run this command with dotnet CLI:
 
 ## Usage
 
-### Create a query
+### Create a query with [GraphQL.Query.Builder](https://github.com/charlesdevandiere/graphql-query-builder-dotnet)
 
 The query building is based on the object which returns.
 
@@ -55,6 +57,7 @@ var query = new Query<Human>("humans") // set the name of the query
         h => h.HomePlanet, // set the name of the field
         sq => sq /// build the sub-query
             .AddField(p => p.Name)
+    )
     .AddField<human>( // add a sub-list field
         h => h.Friends,
         sq => sq

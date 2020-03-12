@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using GraphQL.Query.Builder;
 using Newtonsoft.Json.Linq;
 using Shared.Models;
 using Xunit;
@@ -54,7 +55,7 @@ namespace GraphQL.Client.Extensions.IntegrationTests
             Assert.Equal("0.45m", pikachu.Height.Maximum);
             Assert.Equal("5.25kg", pikachu.Weight.Minimum);
             Assert.Equal("6.75kg", pikachu.Weight.Maximum);
-            Assert.Equal(1, pikachu.Types.Count());
+            Assert.Single(pikachu.Types);
             Assert.Equal("Electric", pikachu.Types[0]);
             Assert.Equal(2, pikachu.Attacks.Fast.Count());
             Assert.Equal("Quick Attack", pikachu.Attacks.Fast[0].Name);
@@ -165,8 +166,8 @@ namespace GraphQL.Client.Extensions.IntegrationTests
 
             JToken jToken = JToken.Parse(json);
 
-            Assert.Equal(jToken.Count(), 1);
-            Assert.Equal(jToken["name"], "Pikachu");
+            Assert.Single(jToken);
+            Assert.Equal("Pikachu", jToken["name"]);
         }
 
         [Fact]
@@ -180,8 +181,8 @@ namespace GraphQL.Client.Extensions.IntegrationTests
 
             JToken jToken = await client.Get<JToken>(query);
 
-            Assert.Equal(jToken.Count(), 1);
-            Assert.Equal(jToken["name"], "Pikachu");
+            Assert.Single(jToken);
+            Assert.Equal("Pikachu", jToken["name"]);
         }
 
         [Fact]
