@@ -22,6 +22,8 @@ steps:
 
   - task: UseGitVersion@5
     displayName: GitVersion
+    inputs:
+      versionSpec: '5.x'
 
   - script: dotnet tool restore
     displayName: 'dotnet tool restore'
