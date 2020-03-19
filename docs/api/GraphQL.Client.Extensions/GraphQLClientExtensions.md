@@ -12,10 +12,10 @@ public static class GraphQLClientExtensions
 
 | Type | Name | Summary |
 | --- | --- | --- |
-| `Task<T>` | Get(this `GraphQLClient` gqlClient, `IQuery` query, `CancellationToken` cancellationToken = null) | Send a `GraphQL.Common.Request.GraphQLRequest` via GET. |
-| `Task<IReadOnlyDictionary<String, JToken>>` | GetBatch(this `GraphQLClient` gqlClient, `IQuery[]` queries, `CancellationToken` cancellationToken = null) | Send a `GraphQL.Common.Request.GraphQLRequest` composed of a query batch via GET. |
-| `Task<T>` | Post(this `GraphQLClient` gqlClient, `IQuery` query, `CancellationToken` cancellationToken = null) | Send a `GraphQL.Common.Request.GraphQLRequest` via POST. |
-| `Task<IReadOnlyDictionary<String, JToken>>` | PostBatch(this `GraphQLClient` gqlClient, `IQuery[]` queries, `CancellationToken` cancellationToken = null) | Send a `GraphQL.Common.Request.GraphQLRequest` composed of a query batch via POST. |
+| `Task<T>` | Get(this `GraphQLClient` client, `IQuery` query, `CancellationToken` cancellationToken = null) | Send a `GraphQL.Common.Request.GraphQLRequest` via GET. |
+| `Task<IReadOnlyDictionary<String, JToken>>` | GetBatch(this `GraphQLClient` client, `IQuery[]` queries, `CancellationToken` cancellationToken = null) | Send a `GraphQL.Common.Request.GraphQLRequest` composed of a query batch via GET. |
+| `Task<T>` | Post(this `GraphQLClient` client, `IQuery` query, `CancellationToken` cancellationToken = null) | Send a `GraphQL.Common.Request.GraphQLRequest` via POST. |
+| `Task<IReadOnlyDictionary<String, JToken>>` | PostBatch(this `GraphQLClient` client, `IQuery[]` queries, `CancellationToken` cancellationToken = null) | Send a `GraphQL.Common.Request.GraphQLRequest` composed of a query batch via POST. |
 
 ---
 

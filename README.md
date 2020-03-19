@@ -9,6 +9,8 @@ Extensions for [GraphQL.Client](https://github.com/graphql-dotnet/graphql-client
 [![Nuget](https://img.shields.io/nuget/v/GraphQL.Client.Extensions.svg?color=blue&logo=nuget)](https://www.nuget.org/packages/GraphQL.Client.Extensions)
 [![Downloads](https://img.shields.io/nuget/dt/GraphQL.Client.Extensions.svg?logo=nuget)](https://www.nuget.org/packages/GraphQL.Client.Extensions)
 
+Uses [GraphQL.Query.Builder](https://github.com/charlesdevandiere/graphql-query-builder-dotnet) for query building.
+
 See complete documentation [here](https://charlesdevandiere.github.io/graphql-client-extensions/)
 
 See sample [here](sample/Pokedex)
@@ -22,7 +24,7 @@ See sample [here](sample/Pokedex)
 ## Usage
 
 ```csharp
-// create the query
+// create the query with GraphQL.Query.Builder
 var query = new Query<Human>("humans") // set the name of the query
     .AddArguments(new { id = "uE78f5hq" }) // add query arguments
     .AddField(h => h.FirstName) // add firstName field
@@ -31,6 +33,7 @@ var query = new Query<Human>("humans") // set the name of the query
         h => h.HomePlanet, // set the name of the field
         sq => sq /// build the sub-query
             .AddField(p => p.Name)
+    )
     .AddField<human>( // add a sub-list field
         h => h.Friends,
         sq => sq
@@ -57,6 +60,9 @@ using (var client = new GraphQLClient("<url>"))
 }
 ```
 
-## Credits
+## Dependencies
 
-Rocket by Gregor Cresnar from the Noun Project
+- [Dawn.Guard](https://www.nuget.org/packages/Dawn.Guard/) (>= 1.0.0)
+- [Newtonsoft.Json](https://www.nuget.org/packages/GraphQL.Client/) (>= 11.0.1)
+- [GraphQL.Client](https://www.nuget.org/packages/GraphQL.Client/) (>= 1.0.3)
+- [GraphQL.Query.Builder](https://www.nuget.org/packages/GraphQL.Query.Builder/) (>= 1.0.0)

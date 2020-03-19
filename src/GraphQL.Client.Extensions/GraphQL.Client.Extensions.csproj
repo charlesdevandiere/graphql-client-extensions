@@ -1,4 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <LangVersion>8.0</LangVersion>
@@ -12,7 +13,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Dawn.Guard" Version="1.10.0" />
+    <PackageReference Include="Dawn.Guard" Version="1.0.0" />
     <PackageReference Include="GraphQL.Client" Version="1.0.3" />
+    <PackageReference Include="GraphQL.Query.Builder" Version="1.0.0" />
   </ItemGroup>
+
 </Project>

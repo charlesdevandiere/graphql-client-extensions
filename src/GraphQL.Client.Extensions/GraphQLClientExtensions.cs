@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Dawn;
 using GraphQL.Common.Request;
 using GraphQL.Common.Response;
+using GraphQL.Query.Builder;
 using Newtonsoft.Json.Linq;
 
 namespace GraphQL.Client.Extensions

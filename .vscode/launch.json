@@ -6,7 +6,7 @@
       "type": "coreclr",
       "request": "launch",
       "preLaunchTask": "build",
-      "program": "${workspaceFolder}/sample/Pokedex/bin/Debug/netcoreapp3.0/Pokedex.dll",
+      "program": "${workspaceFolder}/sample/Pokedex/bin/Debug/netcoreapp3.1/Pokedex.dll",
       "args": [
         "pikachu"
       ],

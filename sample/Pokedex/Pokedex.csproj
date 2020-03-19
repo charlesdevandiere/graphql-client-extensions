@@ -11,8 +11,4 @@
     <ProjectReference Include="..\Models\Models.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="GraphQL.Client" Version="1.0.3" />
-  </ItemGroup>
-
 </Project>

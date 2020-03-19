@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using GraphQL.Client;
 using GraphQL.Client.Extensions;
+using GraphQL.Query.Builder;
 using Newtonsoft.Json.Linq;
 using Shared.Models;
 
