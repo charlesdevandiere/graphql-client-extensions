@@ -11,7 +11,8 @@ namespace GraphQL.Client.Extensions.IntegrationTests
 {
     public class GraphQLClientExtensionsTests
     {
-        const string URL = "https://graphql-pokemon.now.sh";
+        const string URL = "https://graphql-pokemon2.vercel.app/";
+        // The official URL https://graphql-pokemon.now.sh is actualy down.
 
         [Fact]
         public async Task TestGet()
