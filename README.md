@@ -13,7 +13,7 @@ Uses [GraphQL.Query.Builder](https://github.com/charlesdevandiere/graphql-query-
 
 See complete documentation [here](https://charlesdevandiere.github.io/graphql-client-extensions/)
 
-See sample [here](sample/Pokedex)
+See sample [here](https://github.com/charlesdevandiere/graphql-client-extensions/tree/master/sample/Pokedex)
 
 ## Install
 
