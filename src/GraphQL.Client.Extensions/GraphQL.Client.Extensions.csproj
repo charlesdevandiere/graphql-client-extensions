@@ -32,7 +32,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="..\..\logo.png" Pack="true" PackagePath="/"/>
+    <None Include="..\..\logo.png" Pack="true" PackagePath="/" />
     <None Include="..\..\LICENSE" Pack="true" PackagePath="LICENSE" />
     <None Include="..\..\README.md" Pack="true" PackagePath="/" />
   </ItemGroup>
@@ -40,7 +40,7 @@
   <ItemGroup>
     <PackageReference Include="Dawn.Guard" Version="1.12.0" />
     <PackageReference Include="GraphQL.Client" Version="1.0.3" />
-    <PackageReference Include="GraphQL.Query.Builder" Version="1.5.0" />
+    <PackageReference Include="GraphQL.Query.Builder" Version="1.6.0" />
   </ItemGroup>
 
 </Project>

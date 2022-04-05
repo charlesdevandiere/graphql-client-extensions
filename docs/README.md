@@ -16,7 +16,7 @@ Uses [GraphQL.Query.Builder](https://github.com/charlesdevandiere/graphql-query-
 Run this command with dotnet CLI:
 
 ```console
-> dotnet add package GraphQL.Client.Extensions
+dotnet add package GraphQL.Client.Extensions
 ```
 
 ## Usage

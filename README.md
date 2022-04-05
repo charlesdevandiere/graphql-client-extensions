@@ -18,7 +18,7 @@ See sample [here](sample/Pokedex)
 ## Install
 
 ```console
-> dotnet add package GraphQL.Client.Extensions
+dotnet add package GraphQL.Client.Extensions
 ```
 
 ## Usage
