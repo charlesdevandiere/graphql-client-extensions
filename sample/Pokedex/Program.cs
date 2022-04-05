@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Shared.Models;
@@ -9,7 +9,8 @@ namespace Pokedex
     {
         static async Task Main(string[] args)
         {
-            var service = new PokemonService("https://graphql-pokemon.now.sh");
+            var service = new PokemonService("https://graphql-pokemon2.vercel.app/");
+            // The official URL https://graphql-pokemon.now.sh is actualy down.
 
             IEnumerable<Pokemon> pokemons;
 

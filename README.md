@@ -18,7 +18,7 @@ See sample [here](sample/Pokedex)
 ## Install
 
 ```console
-> dotnet add package GraphQL.Client.Extensions
+dotnet add package GraphQL.Client.Extensions
 ```
 
 ## Usage
@@ -63,6 +63,6 @@ using (var client = new GraphQLClient("<url>"))
 ## Dependencies
 
 - [Dawn.Guard](https://www.nuget.org/packages/Dawn.Guard/) (>= 1.12.0)
-- [Newtonsoft.Json](https://www.nuget.org/packages/GraphQL.Client/) (>= 11.0.1)
+- [Newtonsoft.Json](https://www.nuget.org/packages/GraphQL.Client/) (>= 12.0.3)
 - [GraphQL.Client](https://www.nuget.org/packages/GraphQL.Client/) (>= 1.0.3)
-- [GraphQL.Query.Builder](https://www.nuget.org/packages/GraphQL.Query.Builder/) (>= 1.0.1)
+- [GraphQL.Query.Builder](https://www.nuget.org/packages/GraphQL.Query.Builder/) (>= 1.6.0)
