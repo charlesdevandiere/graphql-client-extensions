@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using GraphQL.Client;
 using GraphQL.Client.Extensions;
 using GraphQL.Query.Builder;
+using GraphQL.Query.Builder.Formatter.NewtonsoftJson;
 using Newtonsoft.Json.Linq;
 using Shared.Models;
 
@@ -13,13 +14,18 @@ namespace Pokedex
     {
         private readonly string graphqlPokemonUrl;
 
+        private readonly QueryOptions options = new()
+        {
+            Formatter = NewtonsoftJsonPropertyNameFormatter.Format
+        };
+
         public PokemonService(string graphqlPokemonUrl)
         {
             this.graphqlPokemonUrl = graphqlPokemonUrl;
         }
 
         private IQuery pokemonQuery(string name) =>
-            new Query<Pokemon>("pokemon")
+            new Query<Pokemon>("pokemon", this.options)
                 .Alias(name)
                 .AddArguments(new { name })
                 .AddField(p => p.Id)
@@ -74,7 +80,7 @@ namespace Pokedex
         /// <summary>Returns all Pokemons</summary>
         public async Task<IEnumerable<Pokemon>> GetAllPokemons()
         {
-            var query = new Query<Pokemon>("pokemons")
+            var query = new Query<Pokemon>("pokemons", this.options)
                 .AddArguments(new { first = 100 })
                 .AddField(p => p.Id)
                 .AddField(p => p.Number)
