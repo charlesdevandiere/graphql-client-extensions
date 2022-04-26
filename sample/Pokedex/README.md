@@ -7,19 +7,19 @@ This sample is base on the [GraphQL Pokémon](https://github.com/lucasbento/grap
 ### Windows
 
 ```console
-> dotnet build -c Release -r win-x64
+dotnet build -c Release -r win-x64
 ```
 
 ### Ubuntu
 
 ```console
-> dotnet build -c Release -r linux-x64
+dotnet build -c Release -r linux-x64
 ```
 
 ### macOS
 
 ```console
-> dotnet build -c Release -r osx-x64
+dotnet build -c Release -r osx-x64
 ```
 
 > See all runtime identifiers [here](https://docs.microsoft.com/en-us/dotnet/core/rid-catalog)
@@ -27,7 +27,7 @@ This sample is base on the [GraphQL Pokémon](https://github.com/lucasbento/grap
 ## Run
 
 ```console
-> .\bin\Release\netcoreapp2.2\<runtime-identifier>\Pokedex.exe pikachu
+.\bin\Release\netcoreapp2.2\<runtime-identifier>\Pokedex.exe pikachu
 ```
 
 ```console

@@ -25,7 +25,7 @@ dotnet add package GraphQL.Client.Extensions
 
 ```csharp
 // create the query with GraphQL.Query.Builder
-var query = new Query<Human>("humans") // set the name of the query
+Query<Human> query = new Query<Human>("humans", options) // set the name of the query
     .AddArguments(new { id = "uE78f5hq" }) // add query arguments
     .AddField(h => h.FirstName) // add firstName field
     .AddField(h => h.LastName) // add lastName field
@@ -53,7 +53,7 @@ var query = new Query<Human>("humans") // set the name of the query
 //   }
 // }
 
-using (var client = new GraphQLClient("<url>"))
+using (GraphQLClient client = new("<url>"))
 {
     // run the query
     Human human = await client.Get<Human>(query);
@@ -62,7 +62,6 @@ using (var client = new GraphQLClient("<url>"))
 
 ## Dependencies
 
-- [Dawn.Guard](https://www.nuget.org/packages/Dawn.Guard/) (>= 1.12.0)
-- [Newtonsoft.Json](https://www.nuget.org/packages/GraphQL.Client/) (>= 12.0.3)
 - [GraphQL.Client](https://www.nuget.org/packages/GraphQL.Client/) (>= 1.0.3)
-- [GraphQL.Query.Builder](https://www.nuget.org/packages/GraphQL.Query.Builder/) (>= 1.6.0)
+- [GraphQL.Query.Builder](https://www.nuget.org/packages/GraphQL.Query.Builder/) (>= 2.0.0)
+- [GraphQL.Query.Builder.Formatter.NewtonsoftJson](https://www.nuget.org/packages/GraphQL.Query.Builder.Formatter.NewtonsoftJson/) (>= 1.0.0)

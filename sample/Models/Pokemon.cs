@@ -28,15 +28,15 @@ namespace Shared.Models
 
         public override string ToString()
         {
-            var sb = new StringBuilder();
+            StringBuilder sb = new();
             sb.AppendLine($"{this.Number} {this.Name}");
             if (this.Height != null)
             {
-                sb.AppendLine($"Height: {this.Height.ToString()}");
+                sb.AppendLine($"Height: {this.Height}");
             }
             if (this.Weight != null)
             {
-                sb.AppendLine($"Weight: {this.Weight.ToString()}");
+                sb.AppendLine($"Weight: {this.Weight}");
             }
             if (this.Types != null && this.Types.Length > 0)
             {
@@ -44,7 +44,7 @@ namespace Shared.Models
             }
             if (this.Attacks != null)
             {
-                sb.AppendLine(this.Attacks.ToString());
+                sb.Append(this.Attacks.ToString());
             }
 
             return sb.ToString();
