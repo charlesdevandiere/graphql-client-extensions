@@ -13,21 +13,21 @@ namespace Shared.Models
 
         public override string ToString()
         {
-            var sb = new StringBuilder();
+            StringBuilder sb = new ();
             if (this.Fast != null && this.Fast.Length > 0)
             {
                 sb.AppendLine("Fast attacks:");
-                foreach (var attack in this.Fast)
+                foreach (Attack attack in this.Fast)
                 {
-                    sb.AppendLine($"- {attack.ToString()}");
+                    sb.AppendLine($"- {attack}");
                 }
             }
             if (this.Special != null && this.Special.Length > 0)
             {
                 sb.AppendLine("Special attacks:");
-                foreach (var attack in this.Special)
+                foreach (Attack attack in this.Special)
                 {
-                    sb.AppendLine($"- {attack.ToString()}");
+                    sb.AppendLine($"- {attack}");
                 }
             }
 

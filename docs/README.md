@@ -49,7 +49,7 @@ class Planet
 After that, you can write a query like this :
 
 ```csharp
-var query = new Query<Human>("humans") // set the name of the query
+IQuery<Human> query = new Query<Human>("humans") // set the name of the query
     .AddArguments(new { id = "uE78f5hq" }) // add query arguments
     .AddField(h => h.FirstName) // add firstName field
     .AddField(h => h.LastName) // add lastName field
@@ -83,33 +83,23 @@ humans (id: "uE78f5hq") {
 ```
 
 By default, the `AddField()` method use the property name as field name.
-You can use custom formater or JsonPropertyAttribute to change this behavior.
+You can change this behavior by providing a custom formatter.
 
 ```csharp
-class Human
+QueryOptions options = new()
 {
-    [JsonProperty("firstName")]
-    public string FirstName { get; set; }
+    Formater = // Your custom formatter
+};
 
-    [JsonProperty("lastName")]
-    public string LastName { get; set; }
-
-    [JsonProperty("homePlanet")]
-    public Planet HomePlanet { get; set; }
-
-    [JsonProperty("friends")]
-    public IEnumerable<Human> Friends { get; set; }
-}
+IQuery<Human> query = new Query<Human>("human", options);
 ```
 
-```csharp
-var query = new Query(options: new QueryOptions
-    {
-        Formater = QueryFormaters.CamelCaseFormater
-    });
-```
+Formater's type is ```Func<PropertyInfo, string>```
 
-Formater's type is ```Func<string, string>```
+There are built-in formatters :
+
+- [CamelCasePropertyNameFormatter](api/graphql.query.builder.camelcasepropertynameformatter.md) : transforms property name into camel-case.
+- [NewtonsoftJsonPropertyNameFormatter](https://github.com/charlesdevandiere/graphql-query-builder-formatter-newtonsoftjson) : use `JsonPropertyAttribute` value.
 
 ### Run the query
 
@@ -121,7 +111,7 @@ You can run the query using two GraphQLCLient extension methods:
 Example:
 
 ```csharp
-using (var client = new GraphQLClient("<url>"))
+using (GraphQLClient client = new("<url>"))
 {
     Human human = await client.Get<Human>(query);
 }

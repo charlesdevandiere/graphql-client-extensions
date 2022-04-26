@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using GraphQL.Client;
 using GraphQL.Client.Extensions;
 using GraphQL.Query.Builder;
+using GraphQL.Query.Builder.Formatter.NewtonsoftJson;
 using Newtonsoft.Json.Linq;
 using Shared.Models;
 
@@ -13,13 +14,18 @@ namespace Pokedex
     {
         private readonly string graphqlPokemonUrl;
 
+        private readonly QueryOptions options = new()
+        {
+            Formatter = NewtonsoftJsonPropertyNameFormatter.Format
+        };
+
         public PokemonService(string graphqlPokemonUrl)
         {
             this.graphqlPokemonUrl = graphqlPokemonUrl;
         }
 
         private IQuery pokemonQuery(string name) =>
-            new Query<Pokemon>("pokemon")
+            new Query<Pokemon>("pokemon", this.options)
                 .Alias(name)
                 .AddArguments(new { name })
                 .AddField(p => p.Id)
@@ -51,10 +57,10 @@ namespace Pokedex
         /// <param name="name">The Pokemon name.</param>
         public async Task<Pokemon> GetPokemon(string name)
         {
-            var query = pokemonQuery(name);
+            IQuery query = this.pokemonQuery(name);
 
-            using var client = new GraphQLClient(this.graphqlPokemonUrl);
-            var pokemon = await client.Get<Pokemon>(query);
+            using GraphQLClient client = new(this.graphqlPokemonUrl);
+            Pokemon pokemon = await client.Get<Pokemon>(query);
 
             return pokemon;
         }
@@ -63,9 +69,9 @@ namespace Pokedex
         /// <param name="names">The Pokemons names</param>
         public async Task<IEnumerable<Pokemon>> GetPokemonBatch(string[] names)
         {
-            IQuery[] queries = names.Select(name => pokemonQuery(name)).ToArray();
+            IQuery[] queries = names.Select(name => this.pokemonQuery(name)).ToArray();
 
-            using var client = new GraphQLClient(this.graphqlPokemonUrl);
+            using GraphQLClient client = new(this.graphqlPokemonUrl);
             IReadOnlyDictionary<string, JToken> batch = await client.GetBatch(queries);
 
             return batch.Values.Select(jToken => jToken.ToObject<Pokemon>());
@@ -74,7 +80,7 @@ namespace Pokedex
         /// <summary>Returns all Pokemons</summary>
         public async Task<IEnumerable<Pokemon>> GetAllPokemons()
         {
-            var query = new Query<Pokemon>("pokemons")
+            IQuery<Pokemon> query = new Query<Pokemon>("pokemons", this.options)
                 .AddArguments(new { first = 100 })
                 .AddField(p => p.Id)
                 .AddField(p => p.Number)
@@ -89,8 +95,8 @@ namespace Pokedex
                 )
                 .AddField(p => p.Types);
 
-            using var client = new GraphQLClient(this.graphqlPokemonUrl);
-            var pokemons = await client.Get<IEnumerable<Pokemon>>(query);
+            using GraphQLClient client = new(this.graphqlPokemonUrl);
+            IEnumerable<Pokemon> pokemons = await client.Get<IEnumerable<Pokemon>>(query);
 
             return pokemons;
         }
